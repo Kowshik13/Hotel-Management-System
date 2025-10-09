@@ -1,1 +1,2 @@
-# Hotel-Management-System
+# Hotel Management System
+A console-based hotel management system written in modern C++ that showcases OOP, file handling, and clean separation of concerns. The app is hotel-agnostic: all operational parameters (rooms, room types, nightly rates, restaurant menu, taxes, etc.) are configured by an Administrator at runtime—no recompilation needed. Data is stored in human-readable JSONL files (one JSON object per line), keeping the project true to “file handling” while remaining forward-compatible and easy to debug.
