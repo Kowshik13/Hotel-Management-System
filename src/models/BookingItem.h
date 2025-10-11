@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <variant>
 #include <vector>
-#include "Guest.h"
+#include "User.h"
 #include "BookingType.h"
 #include "RestaurantOrder.h"
 
@@ -13,7 +13,7 @@ namespace hms {
         int roomNumber{};
         int nights{1};
         std::int64_t nightlyRateLocked{};
-        Guest occupants;
+        User occupants;
     };
 
     using BookingItem = std::variant<RoomStay, RestaurantOrder>;

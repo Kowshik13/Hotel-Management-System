@@ -4,7 +4,7 @@
 #include "Role.h"
 
 namespace hms {
-    struct Guest {
+    struct User {
         std::string firstName;
         std::string lastName;
         std::string address;
@@ -13,7 +13,7 @@ namespace hms {
         std::string login;
         std::string password;
 
-        Role role{Role::USER};
+        Role role{Role::GUEST};
     };
 }
 

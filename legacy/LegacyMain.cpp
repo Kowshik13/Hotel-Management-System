@@ -579,10 +579,10 @@ void HOTEL::dinner(int r)
 }
 
 
-int main()
-{
-    system("clear");
-    h.main_menu();
-    return 0;
-}
+//int main()
+//{
+//    system("clear");
+//    h.main_menu();
+//    return 0;
+//}
 
