@@ -3,6 +3,8 @@
 #include "storage/UserRepository.h"
 #include "models/User.h"
 #include "models/Role.h"
+#include "storage/HotelRepository.h"
+#include "storage/RoomsRepository.h"
 
 namespace fs = std::filesystem;
 
@@ -38,5 +40,27 @@ int main() {
     for (const auto& it : repo.list()) {
         std::cout << it.login << " (" << (it.role == hms::Role::ADMIN ? "ADMIN" : it.role == hms::Role::GUEST ? "USER" : "GUEST") << ")\n";
     }
+
+    hms::HotelRepository hotels;
+    hms::RoomsRepository rooms;
+    hotels.load();
+    rooms.load();
+
+    hms::Hotel h{};
+    h.id = "HTL-0001";
+    h.name = "Resort beach";
+    h.stars = 4;
+    h.address = "Antalya, Istanbul";
+    hotels.upsert(h);
+    hotels.saveAll();
+
+    hms::Room r{};
+    r.hotelId="HTL-0001"; r.number=101; r.typeId="DELUXE";
+    r.sizeSqm=24; r.beds=1; r.amenities={"AC","TV"}; r.active=true;
+    rooms.upsert(r);
+    rooms.saveAll();
+
+    std::cout << "Active rooms in " << h.id << ": " << rooms.countActiveByHotel("HTL-0001") << "\n";
+
     return 0;
 }

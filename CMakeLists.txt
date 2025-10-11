@@ -21,4 +21,8 @@ add_executable(Hotel_Management_System legacy/LegacyMain.cpp
         src/storage/UserRepository.h
         src/storage/UserRepository.cpp
         src/Test.cpp
+        src/storage/HotelRepository.h
+        src/storage/HotelRepository.cpp
+        src/storage/RoomsRepository.h
+        src/storage/RoomsRepository.cpp
 )

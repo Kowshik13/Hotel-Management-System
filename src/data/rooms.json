@@ -1,0 +1,15 @@
+[
+  {
+    "active": true,
+    "amenities": [
+      "AC",
+      "TV"
+    ],
+    "beds": 1,
+    "hotelId": "HTL-0001",
+    "notes": "",
+    "number": 101,
+    "sizeSqm": 24,
+    "typeId": "DELUXE"
+  }
+]
