@@ -1,20 +1,22 @@
 [
   {
-    "address": "MG Road",
-    "firstName": "John",
-    "lastName": "Doe",
-    "login": "john",
-    "password": "secret",
-    "phone": "9876543210",
-    "role": "GUEST"
-  },
-  {
     "address": "Baker Street",
     "firstName": "Jane",
     "lastName": "Admin",
     "login": "admin",
     "password": "admin123",
     "phone": "1234567890",
-    "role": "ADMIN"
+    "role": "ADMIN",
+    "userId": "USR-0001"
+  },
+  {
+    "address": "MG Road",
+    "firstName": "John",
+    "lastName": "Doe",
+    "login": "john",
+    "password": "secret",
+    "phone": "9876543210",
+    "role": "GUEST",
+    "userId": "USR-0002"
   }
 ]

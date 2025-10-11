@@ -5,26 +5,21 @@
 #include <vector>
 #include "User.h"
 #include "BookingType.h"
-#include "RestaurantOrder.h"
+#include "RestaurantOrderLine.h"
+#include "BookingStatus.h"
+#include "RoomStayItem.h"
 
 namespace hms {
 
-    struct RoomStay {
-        int roomNumber{};
-        int nights{1};
-        std::int64_t nightlyRateLocked{};
-        User occupants;
-    };
-
-    using BookingItem = std::variant<RoomStay, RestaurantOrder>;
+    using BookingItem = std::variant<RoomStayItem, RestaurantOrderLine>;
 
     inline BookingType kindOf(const BookingItem &it) {
-        if (std::holds_alternative<RoomStay>(it))
-            return BookingType::RoomStay;
+        if (std::holds_alternative<RoomStayItem>(it))
+            return BookingType::RoomStayItem;
 
-        if (std::holds_alternative<RestaurantOrder>(it))
+        if (std::holds_alternative<RestaurantOrderLine>(it))
             return BookingType::RestaurantOrder;
 
-        return BookingType::RoomStay;
+        return BookingType::RoomStayItem;
     }
 }

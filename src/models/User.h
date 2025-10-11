@@ -5,6 +5,7 @@
 
 namespace hms {
     struct User {
+        std::string userId;
         std::string firstName;
         std::string lastName;
         std::string address;

@@ -7,29 +7,36 @@
 
 namespace hms {
 
-    class UsersRepository {
+    class UserRepository {
     public:
         using path_t = std::filesystem::path;
 
-        explicit UsersRepository(path_t path = defaultUsersPath());
+        // Default path: CWD/../src/data/users.json (normalized)
+        explicit UserRepository(path_t path = defaultUsersPath());
 
-        bool load();
-        bool saveAll() const;
+        // Disk I/O
+        bool load();          // reads JSON -> memory (creates empty file if missing)
+        bool saveAll() const; // memory -> JSON (atomic via temp+rename)
 
+        // Queries
+        std::optional<User> getById(const std::string& userId) const;
         std::optional<User> getByLogin(const std::string& login) const;
-        bool upsert(const User& u);
-        bool remove(const std::string& login);
-        std::vector<User> list() const;
+        std::vector<User>   list() const;
 
-        // Expose the resolved absolute path (handy for debugging)
+        bool upsert(const User& u);
+        bool removeById(const std::string& userId);
+        bool removeByLogin(const std::string& login);
+
+        // Utils
+        static path_t defaultUsersPath();
         const path_t& resolvedPath() const { return path_; }
 
-        // CWD/../src/data/users.json  (then lexically normalized)
-        static path_t defaultUsersPath();
+    private:
+        bool loginTakenByOther(const std::string& login, const std::string& thisUserId) const;
 
     private:
         path_t path_;
         std::vector<User> items_;
     };
 
-}
+} // namespace hms

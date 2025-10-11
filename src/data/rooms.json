@@ -11,5 +11,17 @@
     "number": 101,
     "sizeSqm": 24,
     "typeId": "DELUXE"
+  },
+  {
+    "active": true,
+    "amenities": [
+      "AC"
+    ],
+    "beds": 2,
+    "hotelId": "HTL-0001",
+    "notes": "",
+    "number": 102,
+    "sizeSqm": 20,
+    "typeId": "STANDARD"
   }
 ]

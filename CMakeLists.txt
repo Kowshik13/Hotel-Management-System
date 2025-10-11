@@ -17,7 +17,7 @@ add_executable(Hotel_Management_System legacy/LegacyMain.cpp
         src/models/BookingItem.h
         src/models/MenuItem.h
         src/models/RestaurantCategory.h
-        src/models/RestaurantOrder.h
+        src/models/RestaurantOrderLine.h
         src/storage/UserRepository.h
         src/storage/UserRepository.cpp
         src/Test.cpp
@@ -25,4 +25,9 @@ add_executable(Hotel_Management_System legacy/LegacyMain.cpp
         src/storage/HotelRepository.cpp
         src/storage/RoomsRepository.h
         src/storage/RoomsRepository.cpp
+        src/models/Restaurant.h
+        src/models/RoomStayItem.h
+        src/models/Booking.h
+        src/storage/BookingRepository.h
+        src/storage/BookingRepository.cpp
 )
