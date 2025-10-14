@@ -4,7 +4,6 @@
 #include <variant>
 #include <cstdint>
 #include <nlohmann/json.hpp>
-
 #include "RoomStayItem.h"
 #include "RestaurantOrderLine.h"
 #include "BookingType.h"
