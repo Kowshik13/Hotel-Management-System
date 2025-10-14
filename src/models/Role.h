@@ -1,14 +1,17 @@
 #pragma once
-#include <string>
+#include <nlohmann/json.hpp>
 
 namespace hms {
-    enum class Role { GUEST, ADMIN };
 
-    inline std::string to_string(Role r) {
-        switch (r) {
-            case Role::GUEST:  return "GUEST";
-            case Role::ADMIN: return "ADMIN";
-        }
-        return "GUEST";
-    }
-}
+enum class Role {
+    GUEST,
+    ADMIN
+};
+
+// JSON serialization mapping
+NLOHMANN_JSON_SERIALIZE_ENUM(Role, {
+    {Role::GUEST, "GUEST"},
+    {Role::ADMIN, "ADMIN"}
+})
+
+} // namespace hms
