@@ -7,17 +7,9 @@
 #include "RoomStayItem.h"
 #include "RestaurantOrderLine.h"
 #include "BookingType.h"
-
+#include "BookingStatus.h"
 namespace hms {
 
-enum class BookingStatus { ACTIVE, CHECKED_OUT, CANCELLED };
-
-// map enum <-> string for JSON
-NLOHMANN_JSON_SERIALIZE_ENUM(BookingStatus, {
-    {BookingStatus::ACTIVE, "ACTIVE"},
-    {BookingStatus::CHECKED_OUT, "CHECKED_OUT"},
-    {BookingStatus::CANCELLED, "CANCELLED"}
-});
 
 using BookingItem = std::variant<RoomStayItem, RestaurantOrderLine>;
 
