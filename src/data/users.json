@@ -19,14 +19,4 @@
     "role": "GUEST",
     "userId": "USR-0002"
   },
-  {
-    "address": "Carrieres-sur-Seine",
-    "firstName": "Igor",
-    "lastName": "Feshchenko",
-    "login": "igor1",
-    "password": "Hamster37!",
-    "phone": "33781553902",
-    "role": "GUEST",
-    "userId": "USR-1760439039649-44504"
-  }
 ]
