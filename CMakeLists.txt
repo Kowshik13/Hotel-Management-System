@@ -30,4 +30,22 @@ add_executable(Hotel_Management_System legacy/LegacyMain.cpp
         src/models/Booking.h
         src/storage/BookingRepository.h
         src/storage/BookingRepository.cpp
+        src/ui/AppContext.h
+        src/ui/core/ConsoleIO.h
+        src/ui/core/ConsoleIO.cpp
+        src/ui/core/Validators.h
+        src/ui/core/Validators.cpp
+        src/ui/screens/LoginScreen.h
+        src/ui/screens/LoginScreen.cpp
+        src/ui/screens/RegisterScreen.h
+        src/ui/screens/RegisterScreen.cpp
+        src/ui/screens/DashboardGuest.h
+        src/ui/screens/DashboardGuest.cpp
+        src/ui/screens/DashboardAdmin.h
+        src/ui/screens/DashboardAdmin.cpp
+        src/ui/screens/WelcomeScreen.h
+        src/ui/screens/WelcomeScreen.cpp
+        src/ui/Router.h
+        src/ui/Router.cpp
+        src/Main.cpp
 )
