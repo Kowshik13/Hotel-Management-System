@@ -32,17 +32,27 @@ inline void to_json(nlohmann::json& j, const Room& r) {
     };
 }
 inline void from_json(const nlohmann::json& j, Room& r) {
-    // required
-    j.at("id").get_to(r.id);
     j.at("hotelId").get_to(r.hotelId);
-    j.at("number").get_to(r.number);
-    j.at("typeId").get_to(r.typeId);
-    // optional / with defaults for backward compatibility
+    if (j.contains("id"))      j.at("id").get_to(r.id);
+    if (j.contains("number"))  j.at("number").get_to(r.number);
+    if (j.contains("typeId"))  j.at("typeId").get_to(r.typeId);
+
     if (j.contains("sizeSqm"))   j.at("sizeSqm").get_to(r.sizeSqm);
     if (j.contains("beds"))      j.at("beds").get_to(r.beds);
     if (j.contains("amenities")) j.at("amenities").get_to(r.amenities);
     if (j.contains("notes"))     j.at("notes").get_to(r.notes);
     if (j.contains("active"))    j.at("active").get_to(r.active);
+
+    if (r.id.empty()) {
+        // Legacy data might omit a stable ID; derive one from hotelId + room number.
+        const int number = r.number;
+        if (!r.hotelId.empty() && number > 0) {
+            r.id = r.hotelId + "-" + std::to_string(number);
+        }
+        else {
+            r.id = "ROOM-" + std::to_string(number);
+        }
+    }
 }
 
 } // namespace hms
