@@ -6,16 +6,17 @@
 #include "screens/DashboardAdmin.h"
 #include "core/ConsoleIO.h"
 #include <iostream>
+#include <stdexcept>
 
 namespace hms::ui {
 
     // Helpers to persist data once at exit (or after major ops if you prefer)
     static void SaveAll(AppContext& ctx) {
         try {
-            ctx.svc.users->save();
-            ctx.svc.rooms->save();
-            ctx.svc.hotels->save();
-            ctx.svc.bookings->save();
+            ctx.svc.users->saveAll();
+            ctx.svc.rooms->saveAll();
+            ctx.svc.hotels->saveAll();
+            ctx.svc.bookings->saveAll();
         }
         catch (const std::exception& ex) {
             ConsoleIO::println(std::string("[WARN] Failed to save data: ") + ex.what());
@@ -25,10 +26,12 @@ namespace hms::ui {
     void Run(AppContext& ctx) {
         // Load data once, with basic error handling
         try {
-            ctx.svc.users->load();
-            ctx.svc.rooms->load();
-            ctx.svc.hotels->load();
-            ctx.svc.bookings->load();
+            if (!ctx.svc.users->load()  ||
+                !ctx.svc.rooms->load()  ||
+                !ctx.svc.hotels->load() ||
+                !ctx.svc.bookings->load()) {
+                throw std::runtime_error("Repository load failed");
+            }
         }
         catch (const std::exception& ex) {
             ConsoleIO::println(std::string("[ERROR] Failed to load data: ") + ex.what());
@@ -70,10 +73,10 @@ namespace hms::ui {
                 while (ctx.running && ctx.currentUser && shouldContinue) {
                     bool logoutRequested = false;
                     if (role == hms::Role::ADMIN) {
-                        logoutRequested = DashboardAdmin(ctx);   // implement to return true on logout
+                        logoutRequested = DashboardAdmin(ctx);
                     }
                     else {
-                        logoutRequested = DashboardGuest(ctx);   // implement to return true on logout
+                        logoutRequested = DashboardGuest(ctx);
                     }
 
                     if (logoutRequested) {
