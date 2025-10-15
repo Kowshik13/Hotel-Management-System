@@ -8,6 +8,7 @@
 #include "RestaurantOrderLine.h"
 #include "BookingType.h"
 #include "BookingStatus.h"
+#include "BookingItem.h"
 namespace hms {
 
 
