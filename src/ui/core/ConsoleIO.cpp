@@ -70,3 +70,47 @@ namespace hms::ui {
     }
 }
 
+void ConsoleIO::println(const std::string& s) { std::cout << s << '\n'; }
+void ConsoleIO::print(const std::string& s) { std::cout << s; std::cout.flush(); }
+
+void ConsoleIO::waitKey() {
+    std::cout << "(Press Enter)"; std::cout.flush();
+    std::string _; std::getline(std::cin, _);
+}
+
+void ConsoleIO::clear() {
+#ifdef _WIN32
+    std::system("cls");
+#else
+    std::system("clear");
+#endif
+}
+
+// Optional helpers (safe, line-based)
+int ConsoleIO::readInt() {
+    for (;;) {
+        std::string s = readLine("", /*allowEmpty=*/false);
+        try {
+            size_t idx = 0;
+            int v = std::stoi(s, &idx, 10);
+            if (idx == s.size()) return v;
+        }
+        catch (...) {}
+        std::cout << "Please enter a valid integer: ";
+    }
+}
+
+long long ConsoleIO::readInt64() {
+    for (;;) {
+        std::string s = readLine("", /*allowEmpty=*/false);
+        try {
+            size_t idx = 0;
+            long long v = std::stoll(s, &idx, 10);
+            if (idx == s.size()) return v;
+        }
+        catch (...) {}
+        std::cout << "Please enter a valid 64-bit integer: ";
+    }
+}
+
+} // namespace hms::ui
