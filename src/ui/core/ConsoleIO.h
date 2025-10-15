@@ -18,4 +18,3 @@ struct ConsoleIO {
     static int         readInt();    // optional, handy for menus
     static long long   readInt64();  // optional, for timestamps etc.
 };
-}

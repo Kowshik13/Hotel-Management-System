@@ -5,34 +5,42 @@
     "hotelId": "HTL-0001",
     "items": [
       {
-        "hotelId": "HTL-0001",
         "kind": "RoomStayItem",
-        "nightlyRateLocked": 15000,
-        "nights": 2,
-        "occupants": [
-          {
-            "address": "MG Road",
-            "firstName": "Alice",
-            "lastName": "Brown",
-            "phone": "98765",
-            "userId": "GST-000001"
-          }
-        ],
-        "roomNumber": 101
+        "value": {
+          "hotelId": "HTL-0001",
+          "nightlyRateLocked": 15000,
+          "nights": 2,
+          "occupants": [
+            {
+              "active": true,
+              "address": "MG Road",
+              "firstName": "Alice",
+              "lastName": "Brown",
+              "login": "",
+              "passwordHash": "",
+              "phone": "98765",
+              "role": "GUEST",
+              "userId": "GST-000001"
+            }
+          ],
+          "roomNumber": 101
+        }
       },
       {
-        "billedRoomNumber": 101,
-        "category": "Breakfast",
-        "createdAt": 1728800100,
-        "kind": "RestaurantOrderLine",
-        "lineId": "ROL-0001",
-        "menuItemId": "bf-omelette",
-        "nameSnapshot": "Masala Omelette",
-        "orderedByGuestId": "GST-000001",
-        "qty": 2,
-        "restaurantId": "RST-0001",
-        "takenByUsername": "kitchen1",
-        "unitPriceSnapshot": 200
+        "kind": "RestaurantOrder",
+        "value": {
+          "billedRoomNumber": 101,
+          "category": "Breakfast",
+          "createdAt": 1728800100,
+          "lineId": "ROL-0001",
+          "menuItemId": "bf-omelette",
+          "nameSnapshot": "Masala Omelette",
+          "orderedByGuestId": "GST-000001",
+          "qty": 2,
+          "restaurantId": "RST-0001",
+          "takenByUsername": "kitchen1",
+          "unitPriceSnapshot": 200
+        }
       }
     ],
     "primaryGuestId": "GST-000001",
