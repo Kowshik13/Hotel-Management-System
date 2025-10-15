@@ -170,3 +170,8 @@ CMakeUserPresets.json
 *.iml
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,clion,cmake
+src/data/users.json
+src/data/bookings.json
+src/data/hotels.json
+src/data/rooms.json
+src/data/users.json

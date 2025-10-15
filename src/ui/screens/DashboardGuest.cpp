@@ -86,7 +86,7 @@ std::string formatMoney(std::int64_t cents) {
 
     std::ostringstream oss;
     if (negative) oss << "-";
-    oss << "₹" << (cents / 100) << '.'
+    oss << "$" << (cents / 100) << '.'
         << std::setw(2) << std::setfill('0') << (cents % 100);
     return oss.str();
 }
