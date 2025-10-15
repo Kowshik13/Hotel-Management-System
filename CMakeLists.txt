@@ -1,10 +1,8 @@
-cmake_minimum_required(VERSION 3.20)
+﻿cmake_minimum_required(VERSION 3.20)
 project(Hotel_Management_System LANGUAGES CXX)
 
-# Data dir define
 add_compile_definitions(HMS_DATA_DIR="${CMAKE_SOURCE_DIR}/data")
 
-# C++ standard & warnings
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if (MSVC)
@@ -13,13 +11,11 @@ else()
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# nlohmann/json (prefer package, otherwise fallback to header-only)
 find_package(nlohmann_json CONFIG QUIET)
 if (nlohmann_json_FOUND)
   message(STATUS "Using nlohmann_json from package")
 else()
   message(STATUS "nlohmann_json package not found; assuming header-only include is available")
-  # If you vendor the header, ensure your include path contains it.
 endif()
 
 add_executable(Hotel_Management_System
@@ -67,7 +63,11 @@ add_executable(Hotel_Management_System
   src/Main.cpp
 )
 
-# Link nlohmann_json if the config package was found
+# 👇 NEW: make <nlohmann/json.hpp> resolve to external/nlohmann/json.hpp
+target_include_directories(Hotel_Management_System PRIVATE
+  ${CMAKE_SOURCE_DIR}/external
+)
+
 if (nlohmann_json_FOUND)
   target_link_libraries(Hotel_Management_System PRIVATE nlohmann_json::nlohmann_json)
 endif()
