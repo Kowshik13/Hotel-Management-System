@@ -3,4 +3,4 @@
 #include "../AppContext.h"
 
 
-namespace hms::ui { void DashboardGuest(hms::AppContext& ctx); }
+namespace hms::ui { bool DashboardGuest(hms::AppContext& ctx); }
