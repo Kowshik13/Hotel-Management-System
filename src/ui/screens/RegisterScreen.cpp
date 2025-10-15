@@ -1,6 +1,7 @@
 #include "RegisterScreen.h"
 #include "../core/ConsoleIO.h"
 #include "../core/Validators.h"
+#include "../../security/Security.h"
 #include <chrono>
 #include <random>
 #include <iostream>
@@ -55,7 +56,8 @@ namespace hms::ui {
         hms::User u{};
         u.userId   = genUserId();
         u.login    = login;
-        u.password = pw; // TODO: store hash instead
+        u.password = "";
+        u.passwordHash = hms::HashPasswordDemo(pw);
         u.role     = role;
 
         u.firstName = readLine("First name (optional): ", true);
