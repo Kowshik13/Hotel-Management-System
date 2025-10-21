@@ -130,3 +130,25 @@ long long ConsoleIO::readInt64() {
         std::cout << "Please enter a valid 64-bit integer: ";
     }
 }
+
+int ConsoleIO::readIntInRange(const std::string& prompt,
+                              int minInclusive,
+                              int maxInclusive) {
+    if (minInclusive > maxInclusive) std::swap(minInclusive, maxInclusive);
+
+    for (;;) {
+        const std::string input = hms::ui::readLine(prompt, /*allowEmpty=*/false);
+        try {
+            size_t idx = 0;
+            const int value = std::stoi(input, &idx, 10);
+            if (idx == input.size() && value >= minInclusive && value <= maxInclusive) {
+                return value;
+            }
+        }
+        catch (...) {
+        }
+
+        std::cout << "Please enter a number between "
+                  << minInclusive << " and " << maxInclusive << ".\n";
+    }
+}
