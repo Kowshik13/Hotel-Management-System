@@ -359,7 +359,7 @@ void createHotel(AppContext& ctx) {
 
     std::int64_t baseRate = 0;
     for (;;) {
-        const auto value = readLine("Base nightly rate (₹): ");
+        const auto value = readLine("Base nightly rate (€): ");
         if (const auto parsed = parseMoney(value)) {
             baseRate = std::max<std::int64_t>(0, *parsed);
             break;
@@ -425,7 +425,7 @@ void editHotel(AppContext& ctx) {
             hotel.baseRateCents = std::max<std::int64_t>(0, *parsed);
             break;
         }
-        std::cout << "Enter an amount such as 8500 or 8499.99.\n";
+        std::cout << "Enter an amount such as 850 or 849.99.\n";
     }
 
     for (;;) {

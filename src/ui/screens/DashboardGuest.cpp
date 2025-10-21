@@ -152,7 +152,7 @@ std::string nextOrderLineId(const hms::Booking& booking) {
 }
 
 std::int64_t estimateNightlyRate(const hms::Room& room, std::int64_t hotelBaseRate) {
-    std::int64_t base = hotelBaseRate > 0 ? hotelBaseRate : 9000; // ₹90.00 default
+    std::int64_t base = hotelBaseRate > 0 ? hotelBaseRate : 9000; // 90.00 default
     const std::string type = room.typeId;
     if (type == "DELUXE" || type == "LUXURY") {
         base = 15000;
