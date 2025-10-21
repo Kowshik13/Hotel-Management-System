@@ -1,5 +1,8 @@
 #pragma once
 #include <string>
+#include <vector>
+
+#include "MenuItem.h"
 
 namespace hms {
     struct Restaurant {
@@ -9,5 +12,6 @@ namespace hms {
         std::string cuisine;
         std::string openHours;
         bool active{true};
+        std::vector<MenuItem> menu;
     };
 }

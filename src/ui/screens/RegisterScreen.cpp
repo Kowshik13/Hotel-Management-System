@@ -1,6 +1,7 @@
 #include "RegisterScreen.h"
 #include "../core/ConsoleIO.h"
 #include "../core/Validators.h"
+#include "../../security/Security.h"
 #include <chrono>
 #include <random>
 #include <iostream>
@@ -55,7 +56,8 @@ namespace hms::ui {
         hms::User u{};
         u.userId   = genUserId();
         u.login    = login;
-        u.password = pw; // TODO: store hash instead
+        u.password = "";
+        u.passwordHash = hms::HashPasswordDemo(pw);
         u.role     = role;
 
         u.firstName = readLine("First name (optional): ", true);
@@ -66,7 +68,10 @@ namespace hms::ui {
         if(!users.upsert(u) || !users.saveAll()){
             std::cout<<"Could not save user.\n"; return std::nullopt;
         }
-        std::cout<<"Account created ("<<(u.role==hms::Role::ADMIN? "ADMIN" : "GUEST")<<").\n";
+        std::string roleLabel = "GUEST";
+        if (u.role == hms::Role::ADMIN) roleLabel = "ADMIN";
+        else if (u.role == hms::Role::HOTEL_MANAGER) roleLabel = "HOTEL_MANAGER";
+        std::cout<<"Account created ("<<roleLabel<<").\n";
         return u;
     }
 }
