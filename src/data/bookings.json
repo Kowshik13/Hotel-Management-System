@@ -46,5 +46,149 @@
     "primaryGuestId": "GST-000001",
     "status": "ACTIVE",
     "updatedAt": 1728800000
+  },
+  {
+    "bookingId": "BKG-000002",
+    "createdAt": 1760517465,
+    "hotelId": "HTL-0001",
+    "items": [
+      {
+        "kind": "RoomStayItem",
+        "value": {
+          "hotelId": "HTL-0001",
+          "nightlyRateLocked": 16680,
+          "nights": 3,
+          "occupants": [
+            {
+              "active": true,
+              "address": "14 rue carnot villejuif",
+              "firstName": "Kowshik",
+              "lastName": "Raja",
+              "login": "",
+              "passwordHash": "",
+              "phone": "745355437",
+              "role": "GUEST",
+              "userId": "USR-1760517425889-21146"
+            }
+          ],
+          "roomNumber": 101
+        }
+      },
+      {
+        "kind": "RestaurantOrder",
+        "value": {
+          "billedRoomNumber": 101,
+          "category": "Breakfast",
+          "createdAt": 1760526769,
+          "lineId": "ROL-0001",
+          "menuItemId": "bf-omelette",
+          "nameSnapshot": "Masala Omelette",
+          "orderedByGuestId": "USR-1760517425889-21146",
+          "qty": 2,
+          "restaurantId": "RST-0001",
+          "takenByUsername": "RST-0001-desk",
+          "unitPriceSnapshot": 1800
+        }
+      },
+      {
+        "kind": "RestaurantOrder",
+        "value": {
+          "billedRoomNumber": 101,
+          "category": "Dinner",
+          "createdAt": 1760529625,
+          "lineId": "ROL-0002",
+          "menuItemId": "grl-paneer",
+          "nameSnapshot": "Smoked Paneer Skewers",
+          "orderedByGuestId": "USR-1760517425889-21146",
+          "qty": 3,
+          "restaurantId": "RST-0002",
+          "takenByUsername": "RST-0002-desk",
+          "unitPriceSnapshot": 2800
+        }
+      },
+      {
+        "kind": "RestaurantOrder",
+        "value": {
+          "billedRoomNumber": 101,
+          "category": "Dinner",
+          "createdAt": 1760530313,
+          "lineId": "ROL-0003",
+          "menuItemId": "grl-paneer",
+          "nameSnapshot": "Smoked Paneer Skewers",
+          "orderedByGuestId": "USR-1760517425889-21146",
+          "qty": 4,
+          "restaurantId": "RST-0002",
+          "takenByUsername": "RST-0002-desk",
+          "unitPriceSnapshot": 2800
+        }
+      }
+    ],
+    "primaryGuestId": "USR-1760517425889-21146",
+    "status": "ACTIVE",
+    "updatedAt": 1760530313
+  },
+  {
+    "bookingId": "BKG-000003",
+    "createdAt": 1760529756,
+    "hotelId": "HTL-0001",
+    "items": [
+      {
+        "kind": "RoomStayItem",
+        "value": {
+          "hotelId": "HTL-0001",
+          "nightlyRateLocked": 16680,
+          "nights": 3,
+          "occupants": [
+            {
+              "active": true,
+              "address": "14 rue carnot villejuif",
+              "firstName": "Kowshik",
+              "lastName": "Raja",
+              "login": "",
+              "passwordHash": "",
+              "phone": "745355437",
+              "role": "GUEST",
+              "userId": "USR-1760517425889-21146"
+            }
+          ],
+          "roomNumber": 101
+        }
+      }
+    ],
+    "primaryGuestId": "USR-1760517425889-21146",
+    "status": "ACTIVE",
+    "updatedAt": 1760529756
+  },
+  {
+    "bookingId": "BKG-000004",
+    "createdAt": 1760530247,
+    "hotelId": "HTL-0001",
+    "items": [
+      {
+        "kind": "RoomStayItem",
+        "value": {
+          "hotelId": "HTL-0001",
+          "nightlyRateLocked": 16680,
+          "nights": 3,
+          "occupants": [
+            {
+              "active": true,
+              "address": "14 rue carnot villejuif",
+              "firstName": "Kowshik",
+              "lastName": "Raja",
+              "login": "",
+              "passwordHash": "",
+              "phone": "745355437",
+              "role": "GUEST",
+              "userId": "USR-1760517425889-21146"
+            }
+          ],
+          "roomNumber": 101
+        }
+      }
+    ],
+    "primaryGuestId": "USR-1760517425889-21146",
+    "status": "ACTIVE",
+    "updatedAt": 1760530247
   }
 ]

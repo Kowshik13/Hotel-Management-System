@@ -1,8 +1,26 @@
 [
   {
-    "address": "Antalya, Türkiye",
+    "address": "Antalya, Turkiye",
     "id": "HTL-0001",
     "name": "Resort Beach",
+    "stars": 3
+  },
+  {
+    "address": "Le Chatelet, France",
+    "id": "HTL-0002",
+    "name": "Residency",
+    "stars": 3
+  },
+  {
+    "address": "Amsterdam, Netherlands",
+    "id": "HTL-0003",
+    "name": "The Dutch Paradise",
     "stars": 4
+  },
+  {
+    "address": "Rue de lyon, France",
+    "id": "HTL-0004",
+    "name": "Residence Verte",
+    "stars": 3
   }
 ]

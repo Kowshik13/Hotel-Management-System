@@ -42,7 +42,7 @@ struct Restaurant {
 };
 
 const std::vector<Restaurant> kRestaurants = {
-    {"RST-0001", "Sunrise Café", "Fresh breakfasts & light bites", {
+    {"RST-0001", "Sunrise Cafe", "Fresh breakfasts & light bites", {
          {"bf-omelette",    "Masala Omelette",      "Breakfast",  1800},
          {"bf-pancakes",    "Maple Pancakes",       "Breakfast",  2200},
          {"bf-coldbrew",    "Cold Brew Coffee",     "Drinks",     900},

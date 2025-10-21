@@ -25,5 +25,20 @@
     "number": 102,
     "sizeSqm": 20,
     "typeId": "STANDARD"
+  },
+  {
+    "active": false,
+    "amenities": [
+      "TV",
+      "AC",
+      "HEATER"
+    ],
+    "beds": 4,
+    "hotelId": "HTL-0002",
+    "id": "HTL-0002-1",
+    "notes": "",
+    "number": 1,
+    "sizeSqm": 22,
+    "typeId": "STANDARD"
   }
 ]

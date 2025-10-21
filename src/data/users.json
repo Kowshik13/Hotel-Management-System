@@ -20,5 +20,38 @@
     "phone": "9876543210",
     "role": "GUEST",
     "userId": "USR-0002"
+  },
+  {
+    "active": true,
+    "address": "14, rue carnot Villejuif",
+    "firstName": "Kowshik",
+    "lastName": "Raja",
+    "login": "12345",
+    "passwordHash": "6e1abbfae6bc1a99",
+    "phone": "745355437",
+    "role": "GUEST",
+    "userId": "USR-1760515927119-37590"
+  },
+  {
+    "active": true,
+    "address": "",
+    "firstName": "",
+    "lastName": "",
+    "login": "user1",
+    "passwordHash": "64fad945c6200dec",
+    "phone": "",
+    "role": "GUEST",
+    "userId": "USR-1760516556005-4442"
+  },
+  {
+    "active": true,
+    "address": "14 rue carnot villejuif",
+    "firstName": "Kowshik",
+    "lastName": "Raja",
+    "login": "user2",
+    "passwordHash": "6e1abbfae6bc1a99",
+    "phone": "745355437",
+    "role": "GUEST",
+    "userId": "USR-1760517425889-21146"
   }
 ]
