@@ -5,14 +5,16 @@
 #include "../storage/RoomsRepository.h"
 #include "../storage/HotelRepository.h"
 #include "../storage/BookingRepository.h"
+#include "../storage/RestaurantRepository.h"
 
 namespace hms {
 
     struct Services {
-        UserRepository*    users{};
-        RoomsRepository*   rooms{};
-        HotelRepository*   hotels{};
-        BookingRepository* bookings{};
+        UserRepository*       users{};
+        RoomsRepository*      rooms{};
+        HotelRepository*      hotels{};
+        BookingRepository*    bookings{};
+        RestaurantRepository* restaurants{};
         // Add AuthService later (hashes, lockouts, etc.)
     };
 

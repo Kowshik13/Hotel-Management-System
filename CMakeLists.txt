@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.20)
 project(Hotel_Management_System LANGUAGES CXX)
 
-add_compile_definitions(HMS_DATA_DIR="${CMAKE_SOURCE_DIR}/data")
+add_compile_definitions(HMS_DATA_DIR="${CMAKE_SOURCE_DIR}/src/data")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -19,7 +19,6 @@ else()
 endif()
 
 add_executable(Hotel_Management_System
-  legacy/LegacyMain.cpp
   src/models/Role.h
   src/models/User.h
   src/models/Hotel.h
@@ -38,11 +37,15 @@ add_executable(Hotel_Management_System
   src/storage/HotelRepository.cpp
   src/storage/RoomsRepository.h
   src/storage/RoomsRepository.cpp
+  src/storage/RestaurantRepository.h
+  src/storage/RestaurantRepository.cpp
   src/models/Restaurant.h
   src/models/RoomStayItem.h
   src/models/Booking.h
   src/storage/BookingRepository.h
   src/storage/BookingRepository.cpp
+  src/security/Security.h
+  src/security/Security.cpp
   src/ui/AppContext.h
   src/ui/core/ConsoleIO.h
   src/ui/core/ConsoleIO.cpp
@@ -56,6 +59,8 @@ add_executable(Hotel_Management_System
   src/ui/screens/DashboardGuest.cpp
   src/ui/screens/DashboardAdmin.h
   src/ui/screens/DashboardAdmin.cpp
+  src/ui/screens/DashboardHotelManager.h
+  src/ui/screens/DashboardHotelManager.cpp
   src/ui/screens/WelcomeScreen.h
   src/ui/screens/WelcomeScreen.cpp
   src/ui/Router.h
@@ -65,7 +70,8 @@ add_executable(Hotel_Management_System
 
 # 👇 NEW: make <nlohmann/json.hpp> resolve to external/nlohmann/json.hpp
 target_include_directories(Hotel_Management_System PRIVATE
-  ${CMAKE_SOURCE_DIR}/external
+  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_SOURCE_DIR}/src/external
 )
 
 if (nlohmann_json_FOUND)

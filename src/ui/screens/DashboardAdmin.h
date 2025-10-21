@@ -1,4 +1,4 @@
 #pragma once
 #include "../AppContext.h"
 
-namespace hms::ui { void DashboardAdmin(hms::AppContext& ctx); }
+namespace hms::ui { bool DashboardAdmin(hms::AppContext& ctx); }

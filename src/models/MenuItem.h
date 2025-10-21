@@ -8,7 +8,7 @@ namespace hms {
         std::string  restaurantId;
         std::string  name;         // "Masala Omelette"
         std::string  category;     // "Breakfast" | "Lunch" | "Dinner" | ...
-        std::int64_t price{};
+        std::int64_t priceCents{};
         bool         active{true};
     };
 }

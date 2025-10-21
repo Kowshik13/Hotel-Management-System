@@ -1,7 +1,9 @@
 [
   {
     "address": "Antalya, Türkiye",
+    "baseRateCents": 185000,
     "id": "HTL-0001",
+    "managerUserId": "USR-0003",
     "name": "Resort Beach",
     "stars": 4
   }
