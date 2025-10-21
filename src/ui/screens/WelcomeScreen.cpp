@@ -7,9 +7,6 @@ namespace hms::ui {
         std::cout<<"1) Login\n";
         std::cout<<"2) Register\n";
         std::cout<<"3) Exit\n";
-        auto c = readLine("Select: ");
-        if (c=="1") return 1;
-        if(c=="2") return 2;
-        return 3;
+        return ConsoleIO::readIntInRange("Select: ", 1, 3);
     }
 }

@@ -44,6 +44,8 @@ cmake --build build --config Release
 
 Data files are stored under `src/data/` by default. At runtime they are copied to the working directory as `data/` so you can edit or version-control them separately. To reset the application state simply delete the generated `data/` directory before starting the program again.
 
+The repository also ships with a richer demo catalogue in [`src/data/catalogue.json`](src/data/catalogue.json) that lists hotels, their rooms, and associated restaurants/menus. You can use it as a reference when extending the JSON fixtures or for manual testing.
+
 ### Sample credentials
 | Role  | Username | Password    |
 |-------|----------|-------------|
@@ -68,8 +70,10 @@ A minimal smoke test suite lives under `tests/` and can be executed with CTest:
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
-ctest --test-dir build
+ctest --test-dir build --output-on-failure
 ```
+
+The suite now includes integrity checks for the sample catalogue file (`test_sample_data.cpp`) alongside repository CRUD smoke tests. The additional output-on-failure flag prints descriptive diagnostics (hotel counts, missing references, etc.) if the sample data ever becomes inconsistent.
 
 ## Customisation tips
 - To seed different starter data, edit the JSON files in `src/data/` and delete the generated `data/` folder before the next run.
