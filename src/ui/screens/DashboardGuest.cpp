@@ -86,7 +86,7 @@ std::string formatMoney(std::int64_t cents) {
 
     std::ostringstream oss;
     if (negative) oss << "-";
-    oss << "$" << (cents / 100) << '.'
+    oss << "EUR " << (cents / 100) << '.'
         << std::setw(2) << std::setfill('0') << (cents % 100);
     return oss.str();
 }
@@ -149,7 +149,7 @@ std::string nextOrderLineId(const hms::Booking& booking) {
 }
 
 std::int64_t estimateNightlyRate(const hms::Room& room) {
-    std::int64_t base = 9000; // ₹90.00 default
+    std::int64_t base = 9000; // EUR 90.00 default
     const std::string type = room.typeId;
     if (type == "DELUXE" || type == "LUXURY") {
         base = 15000;
@@ -265,7 +265,7 @@ void showBookingsSummary(const AppContext& ctx, bool verbose) {
                 const auto total = stay.nightlyRateLocked * stay.nights;
                 roomTotal += total;
                 std::cout << "    Room " << stay.roomNumber
-                          << ": " << stay.nights << " night(s) × "
+                          << ": " << stay.nights << " night(s) x "
                           << formatMoney(stay.nightlyRateLocked)
                           << " = " << formatMoney(total) << "\n";
                 if (verbose && !stay.occupants.empty()) {
@@ -284,7 +284,7 @@ void showBookingsSummary(const AppContext& ctx, bool verbose) {
                 const auto total = line.unitPriceSnapshot * line.qty;
                 diningTotal += total;
                 std::cout << "    Dining: " << line.nameSnapshot
-                          << " × " << line.qty
+                          << " x " << line.qty
                           << " (" << formatMoney(line.unitPriceSnapshot)
                           << ") -> " << formatMoney(total);
                 if (!line.restaurantId.empty()) {
@@ -319,7 +319,7 @@ void handleBookRoom(AppContext& ctx) {
     for (std::size_t i = 0; i < hotels.size(); ++i) {
         const auto& h = hotels[i];
         std::cout << "  " << (i + 1) << ") " << h.name
-                  << " — " << h.address << "\n";
+                  << " - " << h.address << "\n";
     }
     std::cout << "  0) Cancel\n";
 
@@ -353,11 +353,11 @@ void handleBookRoom(AppContext& ctx) {
         const auto& room = rooms[i];
         const auto rate = estimateNightlyRate(room);
         std::cout << "  " << (i + 1) << ") Room " << room.number
-                  << " • Beds: " << room.beds
-                  << " • Size: " << room.sizeSqm << " sqm"
-                  << " • Rate: " << formatMoney(rate);
+                  << " - Beds: " << room.beds
+                  << " - Size: " << room.sizeSqm << " sqm"
+                  << " - Rate: " << formatMoney(rate);
         if (!room.amenities.empty()) {
-            std::cout << " • Amenities: ";
+            std::cout << " - Amenities: ";
             for (std::size_t a = 0; a < room.amenities.size(); ++a) {
                 std::cout << room.amenities[a];
                 if (a + 1 < room.amenities.size()) std::cout << ", ";
@@ -502,7 +502,7 @@ void handleRestaurantReservation(AppContext& ctx) {
     for (std::size_t i = 0; i < kRestaurants.size(); ++i) {
         const auto& r = kRestaurants[i];
         std::cout << "  " << (i + 1) << ") " << r.name
-                  << " — " << r.description << "\n";
+                  << " - " << r.description << "\n";
     }
     std::cout << "  0) Cancel\n";
 
@@ -523,7 +523,7 @@ void handleRestaurantReservation(AppContext& ctx) {
         for (std::size_t i = 0; i < restaurant.menu.size(); ++i) {
             const auto& item = restaurant.menu[i];
             std::cout << "  " << (i + 1) << ") [" << item.category << "] "
-                      << item.name << " — " << formatMoney(item.priceCents) << "\n";
+                      << item.name << " - " << formatMoney(item.priceCents) << "\n";
         }
         std::cout << "  0) Finish order\n";
 
@@ -573,8 +573,8 @@ void handleRestaurantReservation(AppContext& ctx) {
         addedSomething = true;
         orderTotal += line.unitPriceSnapshot * line.qty;
 
-        std::cout << "Added " << menuItem.name << " × " << *qty
-                  << " — running total " << formatMoney(orderTotal) << "\n";
+        std::cout << "Added " << menuItem.name << " x " << *qty
+                  << " - running total " << formatMoney(orderTotal) << "\n";
 
         auto again = readLine("Add another item? (y/N): ", /*allowEmpty=*/true);
         std::transform(again.begin(), again.end(), again.begin(), [](unsigned char ch){ return static_cast<char>(std::tolower(ch)); });

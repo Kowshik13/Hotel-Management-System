@@ -68,7 +68,10 @@ namespace hms::ui {
         if(!users.upsert(u) || !users.saveAll()){
             std::cout<<"Could not save user.\n"; return std::nullopt;
         }
-        std::cout<<"Account created ("<<(u.role==hms::Role::ADMIN? "ADMIN" : "GUEST")<<").\n";
+        std::string roleLabel = "GUEST";
+        if (u.role == hms::Role::ADMIN) roleLabel = "ADMIN";
+        else if (u.role == hms::Role::MANAGER) roleLabel = "MANAGER";
+        std::cout<<"Account created ("<<roleLabel<<").\n";
         return u;
     }
 }
