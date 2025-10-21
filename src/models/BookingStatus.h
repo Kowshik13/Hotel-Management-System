@@ -1,16 +1,15 @@
+// src/models/BookingStatus.h
 #pragma once
-#include <string>
+#include <nlohmann/json.hpp>
 
 namespace hms {
-    enum class BookingStatus { ACTIVE, CHECKED_OUT, CANCELLED };
 
-    inline std::string to_string(BookingStatus s) {
-        switch (s) {
-            case BookingStatus::ACTIVE:      return "ACTIVE";
-            case BookingStatus::CHECKED_OUT: return "CHECKED_OUT";
-            case BookingStatus::CANCELLED:   return "CANCELLED";
-        }
-        return "ACTIVE";
-    }
-}
+enum class BookingStatus { ACTIVE, CHECKED_OUT, CANCELLED };
 
+NLOHMANN_JSON_SERIALIZE_ENUM(BookingStatus, {
+    {BookingStatus::ACTIVE, "ACTIVE"},
+    {BookingStatus::CHECKED_OUT, "CHECKED_OUT"},
+    {BookingStatus::CANCELLED, "CANCELLED"}
+})
+
+} // namespace hms

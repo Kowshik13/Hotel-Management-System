@@ -8,3 +8,13 @@ namespace hms::ui {
     void        banner(const std::string& title);
     void        pause();
 }
+
+struct ConsoleIO {
+    static void println(const std::string& s);
+    static void print(const std::string& s);
+    static void waitKey();
+    static void clear();
+
+    static int         readInt();    // optional, handy for menus
+    static long long   readInt64();  // optional, for timestamps etc.
+};
