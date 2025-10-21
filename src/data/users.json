@@ -12,6 +12,17 @@
   },
   {
     "active": true,
+    "address": "Central Office",
+    "firstName": "Maria",
+    "lastName": "Manager",
+    "login": "manager",
+    "passwordHash": "f3b205be1d647606",
+    "phone": "5550002000",
+    "role": "MANAGER",
+    "userId": "USR-0003"
+  },
+  {
+    "active": true,
     "address": "MG Road",
     "firstName": "John",
     "lastName": "Doe",

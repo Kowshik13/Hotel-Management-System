@@ -75,6 +75,9 @@ namespace hms::ui {
                     if (role == hms::Role::ADMIN) {
                         logoutRequested = DashboardAdmin(ctx);
                     }
+                    else if (role == hms::Role::MANAGER) {
+                        logoutRequested = DashboardManager(ctx);
+                    }
                     else {
                         logoutRequested = DashboardGuest(ctx);
                     }
