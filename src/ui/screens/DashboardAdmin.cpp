@@ -15,6 +15,7 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <optional>
 #include <sstream>
 #include <string>
@@ -314,16 +315,13 @@ void manageHotels(AppContext& ctx) {
         std::cout << "3) Edit hotel\n";
         std::cout << "4) Remove hotel\n";
         std::cout << "0) Back\n";
-        const auto choice = readLine("Select: ");
+        const int choice = ConsoleIO::readIntInRange("Select: ", 0, 4);
 
-        if (choice == "0") return;
-        if (choice == "1") { listHotels(ctx); continue; }
-        if (choice == "2") { createHotel(ctx); continue; }
-        if (choice == "3") { editHotel(ctx); continue; }
-        if (choice == "4") { removeHotel(ctx); continue; }
-
-        std::cout << "Unknown option.\n";
-        pause();
+        if (choice == 0) return;
+        if (choice == 1) { listHotels(ctx); continue; }
+        if (choice == 2) { createHotel(ctx); continue; }
+        if (choice == 3) { editHotel(ctx); continue; }
+        if (choice == 4) { removeHotel(ctx); continue; }
     }
 }
 
@@ -427,19 +425,15 @@ void addRoom(AppContext& ctx, const Hotel& hotel) {
 
 void editRoom(AppContext& ctx, const Hotel& hotel) {
     banner("Edit room - " + hotel.name);
-    const auto roomNumberStr = readLine("Room number: ");
-    const auto parsed = parseInt(roomNumberStr);
-    if (!parsed) {
-        std::cout << "Invalid room number.\n";
-        pause();
-        return;
-    }
-
-    auto roomOpt = ctx.svc.rooms->get(hotel.id, *parsed);
-    if (!roomOpt) {
-        std::cout << "Room not found.\n";
-        pause();
-        return;
+    std::optional<Room> roomOpt;
+    int roomNumber = 0;
+    for (;;) {
+        roomNumber = ConsoleIO::readIntInRange(
+            "Room number (0 to cancel): ", 0, std::numeric_limits<int>::max());
+        if (roomNumber == 0) return;
+        roomOpt = ctx.svc.rooms->get(hotel.id, roomNumber);
+        if (roomOpt) break;
+        std::cout << "Room not found. Try again.\n";
     }
 
     auto room = *roomOpt;
@@ -484,55 +478,52 @@ void editRoom(AppContext& ctx, const Hotel& hotel) {
 
 void toggleRoomAvailability(AppContext& ctx, const Hotel& hotel) {
     banner("Toggle room availability");
-    const auto roomNumberStr = readLine("Room number: ");
-    const auto parsed = parseInt(roomNumberStr);
-    if (!parsed) {
-        std::cout << "Invalid room number.\n";
+    for (;;) {
+        const int roomNumber = ConsoleIO::readIntInRange(
+            "Room number (0 to cancel): ", 0, std::numeric_limits<int>::max());
+        if (roomNumber == 0) return;
+
+        auto roomOpt = ctx.svc.rooms->get(hotel.id, roomNumber);
+        if (!roomOpt) {
+            std::cout << "Room not found. Try again.\n";
+            continue;
+        }
+
+        auto room = *roomOpt;
+        room.active = !room.active;
+        ctx.svc.rooms->upsert(room);
+        ctx.svc.rooms->saveAll();
+
+        std::cout << "Room " << room.number
+                  << (room.active ? " activated." : " deactivated.") << "\n";
         pause();
         return;
     }
-
-    auto roomOpt = ctx.svc.rooms->get(hotel.id, *parsed);
-    if (!roomOpt) {
-        std::cout << "Room not found.\n";
-        pause();
-        return;
-    }
-
-    auto room = *roomOpt;
-    room.active = !room.active;
-    ctx.svc.rooms->upsert(room);
-    ctx.svc.rooms->saveAll();
-
-    std::cout << "Room " << room.number << (room.active ? " activated." : " deactivated.") << "\n";
-    pause();
 }
 
 void removeRoom(AppContext& ctx, const Hotel& hotel) {
     banner("Remove room");
-    const auto roomNumberStr = readLine("Room number: ");
-    const auto parsed = parseInt(roomNumberStr);
-    if (!parsed) {
-        std::cout << "Invalid room number.\n";
+    for (;;) {
+        const int roomNumber = ConsoleIO::readIntInRange(
+            "Room number (0 to cancel): ", 0, std::numeric_limits<int>::max());
+        if (roomNumber == 0) return;
+
+        if (roomHasBlockingBookings(ctx, hotel.id, roomNumber)) {
+            std::cout << "This room has bookings attached. Set to inactive instead.\n";
+            pause();
+            return;
+        }
+
+        if (!ctx.svc.rooms->remove(hotel.id, roomNumber)) {
+            std::cout << "Room not found. Try again.\n";
+            continue;
+        }
+
+        ctx.svc.rooms->saveAll();
+        std::cout << "Room removed.\n";
         pause();
         return;
     }
-
-    if (roomHasBlockingBookings(ctx, hotel.id, *parsed)) {
-        std::cout << "This room has bookings attached. Set to inactive instead of deleting.\n";
-        pause();
-        return;
-    }
-
-    if (!ctx.svc.rooms->remove(hotel.id, *parsed)) {
-        std::cout << "Room not found.\n";
-        pause();
-        return;
-    }
-
-    ctx.svc.rooms->saveAll();
-    std::cout << "Room removed.\n";
-    pause();
 }
 
 void manageRoomsForHotel(AppContext& ctx, const Hotel& hotel) {
@@ -544,17 +535,14 @@ void manageRoomsForHotel(AppContext& ctx, const Hotel& hotel) {
         std::cout << "4) Toggle availability\n";
         std::cout << "5) Remove room\n";
         std::cout << "0) Back\n";
-        const auto choice = readLine("Select: ");
+        const int choice = ConsoleIO::readIntInRange("Select: ", 0, 5);
 
-        if (choice == "0") return;
-        if (choice == "1") { listRoomsForHotel(ctx, hotel); continue; }
-        if (choice == "2") { addRoom(ctx, hotel); continue; }
-        if (choice == "3") { editRoom(ctx, hotel); continue; }
-        if (choice == "4") { toggleRoomAvailability(ctx, hotel); continue; }
-        if (choice == "5") { removeRoom(ctx, hotel); continue; }
-
-        std::cout << "Unknown option.\n";
-        pause();
+        if (choice == 0) return;
+        if (choice == 1) { listRoomsForHotel(ctx, hotel); continue; }
+        if (choice == 2) { addRoom(ctx, hotel); continue; }
+        if (choice == 3) { editRoom(ctx, hotel); continue; }
+        if (choice == 4) { toggleRoomAvailability(ctx, hotel); continue; }
+        if (choice == 5) { removeRoom(ctx, hotel); continue; }
     }
 }
 
@@ -578,18 +566,11 @@ void manageRooms(AppContext& ctx) {
         }
         std::cout << "0) Back\n";
 
-        const auto choice = readLine("Hotel: ");
-        if (choice == "0") return;
+        const int choice = ConsoleIO::readIntInRange(
+            "Hotel: ", 0, static_cast<int>(hotels.size()));
+        if (choice == 0) return;
 
-        if (const auto parsed = parseInt(choice)) {
-            if (*parsed >= 1 && static_cast<std::size_t>(*parsed) <= hotels.size()) {
-                manageRoomsForHotel(ctx, hotels[static_cast<std::size_t>(*parsed) - 1]);
-                continue;
-            }
-        }
-
-        std::cout << "Invalid selection.\n";
-        pause();
+        manageRoomsForHotel(ctx, hotels[static_cast<std::size_t>(choice) - 1]);
     }
 }
 
@@ -614,18 +595,11 @@ void inspectRooms(AppContext& ctx) {
         }
         std::cout << "0) Back\n";
 
-        const auto choice = readLine("Hotel: ");
-        if (choice == "0") return;
+        const int choice = ConsoleIO::readIntInRange(
+            "Hotel: ", 0, static_cast<int>(hotels.size()));
+        if (choice == 0) return;
 
-        if (const auto parsed = parseInt(choice)) {
-            if (*parsed >= 1 && static_cast<std::size_t>(*parsed) <= hotels.size()) {
-                listRoomsForHotel(ctx, hotels[static_cast<std::size_t>(*parsed) - 1]);
-                continue;
-            }
-        }
-
-        std::cout << "Invalid selection.\n";
-        pause();
+        listRoomsForHotel(ctx, hotels[static_cast<std::size_t>(choice) - 1]);
     }
 }
 
@@ -775,18 +749,13 @@ void changeBookingStatus(AppContext& ctx, Booking booking) {
     std::cout << "2) Mark CHECKED_OUT\n";
     std::cout << "3) Mark CANCELLED\n";
     std::cout << "0) Back\n";
-    const auto choice = readLine("Select: ");
+    const int choice = ConsoleIO::readIntInRange("Select: ", 0, 3);
 
     BookingStatus newStatus = booking.status;
-    if (choice == "0") return;
-    if (choice == "1") newStatus = BookingStatus::ACTIVE;
-    else if (choice == "2") newStatus = BookingStatus::CHECKED_OUT;
-    else if (choice == "3") newStatus = BookingStatus::CANCELLED;
-    else {
-        std::cout << "Unknown option.\n";
-        pause();
-        return;
-    }
+    if (choice == 0) return;
+    if (choice == 1) newStatus = BookingStatus::ACTIVE;
+    else if (choice == 2) newStatus = BookingStatus::CHECKED_OUT;
+    else if (choice == 3) newStatus = BookingStatus::CANCELLED;
 
     booking.status = newStatus;
     booking.updatedAt = nowSeconds();
@@ -837,25 +806,22 @@ void manageBookings(AppContext& ctx) {
         std::cout << "3) Update booking status\n";
         std::cout << "4) Remove cancelled booking\n";
         std::cout << "0) Back\n";
-        const auto choice = readLine("Select: ");
+        const int choice = ConsoleIO::readIntInRange("Select: ", 0, 4);
 
-        if (choice == "0") return;
-        if (choice == "1") { listBookings(ctx, bookings); continue; }
-        if (choice == "2") {
+        if (choice == 0) return;
+        if (choice == 1) { listBookings(ctx, bookings); continue; }
+        if (choice == 2) {
             if (auto booking = pickBooking(ctx, bookings)) viewBookingDetails(ctx, *booking);
             continue;
         }
-        if (choice == "3") {
+        if (choice == 3) {
             if (auto booking = pickBooking(ctx, bookings)) changeBookingStatus(ctx, *booking);
             continue;
         }
-        if (choice == "4") {
+        if (choice == 4) {
             if (auto booking = pickBooking(ctx, bookings)) purgeBooking(ctx, *booking);
             continue;
         }
-
-        std::cout << "Unknown option.\n";
-        pause();
     }
 }
 
@@ -918,22 +884,19 @@ bool DashboardAdmin(hms::AppContext& ctx) {
         std::cout << "4) Operational reports\n";
         std::cout << "5) Logout\n";
         std::cout << "0) Exit application\n";
-        const auto choice = readLine("Select: ");
+        const int choice = ConsoleIO::readIntInRange("Select: ", 0, 5);
 
-        if (choice == "5") {
+        if (choice == 5) {
             return true; // logout
         }
-        if (choice == "0") {
+        if (choice == 0) {
             ctx.running = false;
             return false; // exit app entirely
         }
-        if (choice == "1") { manageHotels(ctx); continue; }
-        if (choice == "2") { manageRooms(ctx); continue; }
-        if (choice == "3") { manageBookings(ctx); continue; }
-        if (choice == "4") { showReports(ctx); continue; }
-
-        std::cout << "Unknown option.\n";
-        pause();
+        if (choice == 1) { manageHotels(ctx); continue; }
+        if (choice == 2) { manageRooms(ctx); continue; }
+        if (choice == 3) { manageBookings(ctx); continue; }
+        if (choice == 4) { showReports(ctx); continue; }
     }
 }
 
@@ -946,22 +909,19 @@ bool DashboardManager(hms::AppContext& ctx) {
         std::cout << "4) Operational reports\n";
         std::cout << "5) Logout\n";
         std::cout << "0) Exit application\n";
-        const auto choice = readLine("Select: ");
+        const int choice = ConsoleIO::readIntInRange("Select: ", 0, 5);
 
-        if (choice == "5") {
+        if (choice == 5) {
             return true;
         }
-        if (choice == "0") {
+        if (choice == 0) {
             ctx.running = false;
             return false;
         }
-        if (choice == "1") { listHotels(ctx); continue; }
-        if (choice == "2") { inspectRooms(ctx); continue; }
-        if (choice == "3") { manageBookings(ctx); continue; }
-        if (choice == "4") { showReports(ctx); continue; }
-
-        std::cout << "Unknown option.\n";
-        pause();
+        if (choice == 1) { listHotels(ctx); continue; }
+        if (choice == 2) { inspectRooms(ctx); continue; }
+        if (choice == 3) { manageBookings(ctx); continue; }
+        if (choice == 4) { showReports(ctx); continue; }
     }
 }
 
