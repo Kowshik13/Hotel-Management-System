@@ -17,4 +17,7 @@ struct ConsoleIO {
 
     static int         readInt();    // optional, handy for menus
     static long long   readInt64();  // optional, for timestamps etc.
+    static int         readIntInRange(const std::string& prompt,
+                                      int minInclusive,
+                                      int maxInclusive);
 };

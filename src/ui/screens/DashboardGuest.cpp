@@ -323,15 +323,11 @@ void handleBookRoom(AppContext& ctx) {
     }
     std::cout << "  0) Cancel\n";
 
-    const auto hotelChoice = parseInt(readLine("Hotel: "));
-    if (!hotelChoice || *hotelChoice < 0 || *hotelChoice > static_cast<int>(hotels.size())) {
-        std::cout << "Invalid selection.\n";
-        pause();
-        return;
-    }
-    if (*hotelChoice == 0) return;
+    const int hotelChoice = ConsoleIO::readIntInRange(
+        "Hotel: ", 0, static_cast<int>(hotels.size()));
+    if (hotelChoice == 0) return;
 
-    const auto selectedHotel = hotels[*hotelChoice - 1];
+    const auto selectedHotel = hotels[hotelChoice - 1];
     auto rooms = ctx.svc.rooms->listByHotel(selectedHotel.id);
     rooms.erase(std::remove_if(rooms.begin(), rooms.end(), [](const hms::Room& r) {
                     return !r.active;
@@ -367,24 +363,15 @@ void handleBookRoom(AppContext& ctx) {
     }
     std::cout << "  0) Cancel\n";
 
-    const auto roomChoice = parseInt(readLine("Room: "));
-    if (!roomChoice || *roomChoice < 0 || *roomChoice > static_cast<int>(rooms.size())) {
-        std::cout << "Invalid selection.\n";
-        pause();
-        return;
-    }
-    if (*roomChoice == 0) return;
+    const int roomChoice = ConsoleIO::readIntInRange(
+        "Room: ", 0, static_cast<int>(rooms.size()));
+    if (roomChoice == 0) return;
 
-    const auto selectedRoom = rooms[*roomChoice - 1];
-    const auto nights = parseInt(readLine("Number of nights (1-30): "));
-    if (!nights || *nights <= 0 || *nights > 30) {
-        std::cout << "Please choose between 1 and 30 nights.\n";
-        pause();
-        return;
-    }
+    const auto selectedRoom = rooms[roomChoice - 1];
+    const int nights = ConsoleIO::readIntInRange("Number of nights (1-30): ", 1, 30);
 
     const auto nightlyRate = estimateNightlyRate(selectedRoom);
-    const auto totalCost   = nightlyRate * (*nights);
+    const auto totalCost   = nightlyRate * nights;
 
     const auto bookingId = nextBookingId(*ctx.svc.bookings);
 
@@ -398,7 +385,7 @@ void handleBookRoom(AppContext& ctx) {
     hms::RoomStayItem stay{};
     stay.hotelId = selectedHotel.id;
     stay.roomNumber = selectedRoom.number;
-    stay.nights = *nights;
+    stay.nights = nights;
     stay.nightlyRateLocked = nightlyRate;
     stay.occupants.push_back(sanitizeOccupant(*ctx.currentUser));
 
@@ -426,7 +413,7 @@ void handleBookRoom(AppContext& ctx) {
 
     std::cout << "\nSummary:\n";
     std::cout << "  Hotel:  " << selectedHotel.name << "\n";
-    std::cout << "  Room:   " << selectedRoom.number << " for " << *nights
+    std::cout << "  Room:   " << selectedRoom.number << " for " << nights
               << " night(s)\n";
     std::cout << "  Guests: " << stay.occupants.size() << "\n";
     std::cout << "  Total:  " << formatMoney(totalCost) << "\n";
@@ -481,15 +468,11 @@ void handleRestaurantReservation(AppContext& ctx) {
     }
     std::cout << "  0) Cancel\n";
 
-    const auto bookingChoice = parseInt(readLine("Booking: "));
-    if (!bookingChoice || *bookingChoice < 0 || *bookingChoice > static_cast<int>(mine.size())) {
-        std::cout << "Invalid selection.\n";
-        pause();
-        return;
-    }
-    if (*bookingChoice == 0) return;
+    const int bookingChoice = ConsoleIO::readIntInRange(
+        "Booking: ", 0, static_cast<int>(mine.size()));
+    if (bookingChoice == 0) return;
 
-    const auto bookingId = mine[*bookingChoice - 1].bookingId;
+    const auto bookingId = mine[bookingChoice - 1].bookingId;
     auto bookingOpt = ctx.svc.bookings->get(bookingId);
     if (!bookingOpt) {
         std::cout << "Booking could not be loaded.\n";
@@ -506,15 +489,11 @@ void handleRestaurantReservation(AppContext& ctx) {
     }
     std::cout << "  0) Cancel\n";
 
-    const auto restaurantChoice = parseInt(readLine("Restaurant: "));
-    if (!restaurantChoice || *restaurantChoice < 0 || *restaurantChoice > static_cast<int>(kRestaurants.size())) {
-        std::cout << "Invalid selection.\n";
-        pause();
-        return;
-    }
-    if (*restaurantChoice == 0) return;
+    const int restaurantChoice = ConsoleIO::readIntInRange(
+        "Restaurant: ", 0, static_cast<int>(kRestaurants.size()));
+    if (restaurantChoice == 0) return;
 
-    const auto& restaurant = kRestaurants[*restaurantChoice - 1];
+    const auto& restaurant = kRestaurants[restaurantChoice - 1];
 
     bool addedSomething = false;
     std::int64_t orderTotal = 0;
@@ -527,19 +506,12 @@ void handleRestaurantReservation(AppContext& ctx) {
         }
         std::cout << "  0) Finish order\n";
 
-        const auto itemChoice = parseInt(readLine("Item: "));
-        if (!itemChoice || *itemChoice < 0 || *itemChoice > static_cast<int>(restaurant.menu.size())) {
-            std::cout << "Invalid selection.\n";
-            continue;
-        }
-        if (*itemChoice == 0) break;
+        const int itemChoice = ConsoleIO::readIntInRange(
+            "Item: ", 0, static_cast<int>(restaurant.menu.size()));
+        if (itemChoice == 0) break;
 
-        const auto& menuItem = restaurant.menu[*itemChoice - 1];
-        const auto qty = parseInt(readLine("Quantity (1-10): "));
-        if (!qty || *qty <= 0 || *qty > 10) {
-            std::cout << "Please choose a quantity between 1 and 10.\n";
-            continue;
-        }
+        const auto& menuItem = restaurant.menu[itemChoice - 1];
+        const int qty = ConsoleIO::readIntInRange("Quantity (1-10): ", 1, 10);
 
         auto rooms = roomNumbersForBooking(booking);
         int billedRoom = 0;
@@ -549,9 +521,10 @@ void handleRestaurantReservation(AppContext& ctx) {
                 std::cout << "  " << (i + 1) << ") Room " << rooms[i] << "\n";
             }
             std::cout << "  0) No room (walk-in)\n";
-            const auto roomChoice = parseInt(readLine("Room: "));
-            if (roomChoice && *roomChoice > 0 && *roomChoice <= static_cast<int>(rooms.size())) {
-                billedRoom = rooms[*roomChoice - 1];
+            const int roomChoice = ConsoleIO::readIntInRange(
+                "Room: ", 0, static_cast<int>(rooms.size()));
+            if (roomChoice > 0) {
+                billedRoom = rooms[roomChoice - 1];
             }
         }
 
@@ -562,7 +535,7 @@ void handleRestaurantReservation(AppContext& ctx) {
         line.menuItemId = menuItem.id;
         line.nameSnapshot = menuItem.name;
         line.unitPriceSnapshot = menuItem.priceCents;
-        line.qty = *qty;
+        line.qty = qty;
         line.billedRoomNumber = billedRoom;
         line.takenByUsername = restaurant.id + "-desk";
         line.orderedByGuestId = ctx.currentUser->userId;
@@ -573,7 +546,7 @@ void handleRestaurantReservation(AppContext& ctx) {
         addedSomething = true;
         orderTotal += line.unitPriceSnapshot * line.qty;
 
-        std::cout << "Added " << menuItem.name << " x " << *qty
+        std::cout << "Added " << menuItem.name << " x " << qty
                   << " - running total " << formatMoney(orderTotal) << "\n";
 
         auto again = readLine("Add another item? (y/N): ", /*allowEmpty=*/true);
@@ -705,24 +678,20 @@ void handleProfile(AppContext& ctx) {
         std::cout << "3) Change password\n";
         std::cout << "0) Back\n";
 
-        const auto choice = readLine("Select: ");
-        if (choice == "1") {
+        const int choice = ConsoleIO::readIntInRange("Select: ", 0, 3);
+        if (choice == 1) {
             banner("My bookings");
             showBookingsSummary(ctx, /*verbose=*/true);
             pause();
         }
-        else if (choice == "2") {
+        else if (choice == 2) {
             editProfile(ctx);
         }
-        else if (choice == "3") {
+        else if (choice == 3) {
             changePassword(ctx);
         }
-        else if (choice == "0") {
+        else if (choice == 0) {
             return;
-        }
-        else {
-            std::cout << "Please choose one of the options above.\n";
-            pause();
         }
     }
 }
@@ -739,30 +708,27 @@ bool DashboardGuest(hms::AppContext& ctx) {
         std::cout << "3) Profile & bookings\n";
         std::cout << "4) Logout\n";
         std::cout << "0) Exit application\n";
-        const auto choice = readLine("Select: ");
+        const int choice = ConsoleIO::readIntInRange("Select: ", 0, 4);
 
-        if (choice == "1") {
+        if (choice == 1) {
             handleBookRoom(ctx);
             continue;
         }
-        if (choice == "2") {
+        if (choice == 2) {
             handleRestaurantReservation(ctx);
             continue;
         }
-        if (choice == "3") {
+        if (choice == 3) {
             handleProfile(ctx);
             continue;
         }
-        if (choice == "4") {
+        if (choice == 4) {
             return true;
         }
-        if (choice == "0") {
+        if (choice == 0) {
             ctx.running = false;
             return false;
         }
-
-        std::cout << "Please choose one of the options above.\n";
-        pause();
     }
 }
 

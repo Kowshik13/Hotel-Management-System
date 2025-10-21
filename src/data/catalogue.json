@@ -1,0 +1,122 @@
+{
+  "hotels": [
+    {
+      "id": "HTL-0001",
+      "name": "Azure Horizon Resort",
+      "address": "Ocean Drive 42, Nice, France",
+      "stars": 5,
+      "description": "Beachfront property with Mediterranean dining and spa access"
+    },
+    {
+      "id": "HTL-0002",
+      "name": "Summit Lodge",
+      "address": "115 Alpine Way, Zermatt, Switzerland",
+      "stars": 4,
+      "description": "Ski-in, ski-out boutique with panoramic mountain views"
+    },
+    {
+      "id": "HTL-0003",
+      "name": "Metropolitan Haven",
+      "address": "80 Market Street, Singapore",
+      "stars": 5,
+      "description": "City centre luxury hotel connected to the riverfront promenade"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "HTL-0001-101",
+      "hotelId": "HTL-0001",
+      "number": 101,
+      "typeId": "DELUXE",
+      "beds": 1,
+      "sizeSqm": 32,
+      "amenities": ["Sea View", "Balcony", "Mini Bar"],
+      "active": true
+    },
+    {
+      "id": "HTL-0001-202",
+      "hotelId": "HTL-0001",
+      "number": 202,
+      "typeId": "SUITE",
+      "beds": 2,
+      "sizeSqm": 54,
+      "amenities": ["Sea View", "Jacuzzi", "Living Area"],
+      "active": true
+    },
+    {
+      "id": "HTL-0002-110",
+      "hotelId": "HTL-0002",
+      "number": 110,
+      "typeId": "STANDARD",
+      "beds": 2,
+      "sizeSqm": 28,
+      "amenities": ["Fireplace", "Mountain View"],
+      "active": true
+    },
+    {
+      "id": "HTL-0002-305",
+      "hotelId": "HTL-0002",
+      "number": 305,
+      "typeId": "SUITE",
+      "beds": 3,
+      "sizeSqm": 68,
+      "amenities": ["Sauna", "Panoramic Balcony"],
+      "active": false
+    },
+    {
+      "id": "HTL-0003-0801",
+      "hotelId": "HTL-0003",
+      "number": 801,
+      "typeId": "LUXURY",
+      "beds": 1,
+      "sizeSqm": 41,
+      "amenities": ["City View", "Smart Home", "Mini Bar"],
+      "active": true
+    },
+    {
+      "id": "HTL-0003-1202",
+      "hotelId": "HTL-0003",
+      "number": 1202,
+      "typeId": "SUITE",
+      "beds": 2,
+      "sizeSqm": 76,
+      "amenities": ["Executive Lounge", "Workspace", "Butler Service"],
+      "active": true
+    }
+  ],
+  "restaurants": [
+    {
+      "id": "RST-0001",
+      "hotelId": "HTL-0001",
+      "name": "La Brise",
+      "style": "Mediterranean fine dining",
+      "menu": [
+        {"id": "la-seabass", "name": "Seared Sea Bass", "category": "Dinner", "priceCents": 4200},
+        {"id": "la-bisque", "name": "Lobster Bisque", "category": "Dinner", "priceCents": 3600},
+        {"id": "la-sorbet", "name": "Citrus Sorbet Trio", "category": "Dessert", "priceCents": 1800}
+      ]
+    },
+    {
+      "id": "RST-0002",
+      "hotelId": "HTL-0002",
+      "name": "Peak Pantry",
+      "style": "Hearty alpine cuisine",
+      "menu": [
+        {"id": "pk-rosti", "name": "Swiss Rösti", "category": "Lunch", "priceCents": 2200},
+        {"id": "pk-fondue", "name": "Three-Cheese Fondue", "category": "Dinner", "priceCents": 3400},
+        {"id": "pk-apfel", "name": "Caramel Apple Tart", "category": "Dessert", "priceCents": 1600}
+      ]
+    },
+    {
+      "id": "RST-0003",
+      "hotelId": "HTL-0003",
+      "name": "Skyline Table",
+      "style": "Pan-Asian tasting menu",
+      "menu": [
+        {"id": "sky-dimsum", "name": "Artisan Dim Sum", "category": "Dinner", "priceCents": 3000},
+        {"id": "sky-satay", "name": "Charcoal Satay Selection", "category": "Dinner", "priceCents": 2600},
+        {"id": "sky-mochi", "name": "Coconut Mochi", "category": "Dessert", "priceCents": 1900}
+      ]
+    }
+  ]
+}

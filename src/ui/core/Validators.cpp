@@ -32,9 +32,9 @@ namespace hms::ui {
         bool up=false, lo=false, di=false;
 
         for(char c: pw) {
-            up|=std::isupper((unsigned char)c);
-            lo|=std::islower((unsigned char)c);
-            di|=std::isdigit((unsigned char)c);
+            up = up || (std::isupper(static_cast<unsigned char>(c)) != 0);
+            lo = lo || (std::islower(static_cast<unsigned char>(c)) != 0);
+            di = di || (std::isdigit(static_cast<unsigned char>(c)) != 0);
         }
 
         if(!(up&&lo&&di)) {
