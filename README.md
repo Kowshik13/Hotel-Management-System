@@ -32,14 +32,14 @@ Optional but recommended for development:
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-./build/hotel-management
+./build/Hotel_Management_System
 ```
 
 On Windows PowerShell:
 ```powershell
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
-./build/Release/hotel-management.exe
+./build/Release/Hotel_Management_System.exe
 ```
 
 Data files are stored under `src/data/` by default. At runtime they are copied to the working directory as `data/` so you can edit or version-control them separately. To reset the application state simply delete the generated `data/` directory before starting the program again.
