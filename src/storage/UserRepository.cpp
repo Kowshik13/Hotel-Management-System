@@ -39,6 +39,7 @@ bool ensureParentDir(const fs::path& p) {
 std::string roleToString(hms::Role r) {
     switch (r) {
         case hms::Role::ADMIN: return "ADMIN";
+        case hms::Role::HOTEL_MANAGER: return "HOTEL_MANAGER";
         case hms::Role::GUEST: return "GUEST";
     }
     return "GUEST";
@@ -46,6 +47,7 @@ std::string roleToString(hms::Role r) {
 
 hms::Role roleFromString(const std::string& s) {
     if (s == "ADMIN") return hms::Role::ADMIN;
+    if (s == "HOTEL_MANAGER") return hms::Role::HOTEL_MANAGER;
     return hms::Role::GUEST;
 }
 

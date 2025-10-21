@@ -4,6 +4,8 @@
 #include "../../models/BookingStatus.h"
 #include "../../models/RoomStayItem.h"
 #include "../../models/RestaurantOrderLine.h"
+#include "../../models/Restaurant.h"
+#include "../../models/MenuItem.h"
 #include "../../security/Security.h"
 #include <algorithm>
 #include <chrono>
@@ -26,35 +28,8 @@ using hms::ui::banner;
 using hms::ui::pause;
 using hms::ui::readLine;
 using hms::ui::readPassword;
-
-struct MenuItem {
-    std::string   id;
-    std::string   name;
-    std::string   category;
-    std::int64_t  priceCents{};
-};
-
-struct Restaurant {
-    std::string        id;
-    std::string        name;
-    std::string        description;
-    std::vector<MenuItem> menu;
-};
-
-const std::vector<Restaurant> kRestaurants = {
-    {"RST-0001", "Sunrise Café", "Fresh breakfasts & light bites", {
-         {"bf-omelette",    "Masala Omelette",      "Breakfast",  1800},
-         {"bf-pancakes",    "Maple Pancakes",       "Breakfast",  2200},
-         {"bf-coldbrew",    "Cold Brew Coffee",     "Drinks",     900},
-         {"bf-fruitbowl",   "Seasonal Fruit Bowl",  "Breakfast",  1500},
-     }},
-    {"RST-0002", "Azure Grill", "Signature grills & sundowner drinks", {
-         {"grl-tikka",      "Tandoori Chicken Tikka","Dinner",    3200},
-         {"grl-seabass",    "Charred Sea Bass",      "Dinner",    4200},
-         {"grl-paneer",     "Smoked Paneer Skewers", "Dinner",    2800},
-         {"grl-mojito",     "Classic Mojito",        "Drinks",    1200},
-     }}
-};
+using hms::Restaurant;
+using hms::MenuItem;
 
 std::string trimCopy(std::string s) {
     const auto notSpace = [](int ch) { return !std::isspace(ch); };
@@ -80,13 +55,41 @@ std::int64_t nowSeconds() {
         .count();
 }
 
+std::vector<Restaurant> restaurantsForHotel(AppContext& ctx, const std::string& hotelId) {
+    auto restaurants = ctx.svc.restaurants->listByHotel(hotelId);
+    std::vector<Restaurant> active;
+    for (auto& restaurant : restaurants) {
+        if (restaurant.active) active.push_back(restaurant);
+    }
+    std::sort(active.begin(), active.end(), [](const Restaurant& a, const Restaurant& b) {
+        return a.name < b.name;
+    });
+    return active;
+}
+
+std::vector<std::size_t> activeMenuIndexes(const Restaurant& restaurant) {
+    std::vector<std::size_t> indexes;
+    for (std::size_t i = 0; i < restaurant.menu.size(); ++i) {
+        if (restaurant.menu[i].active) indexes.push_back(i);
+    }
+    return indexes;
+}
+
+std::string restaurantSummary(const Restaurant& r) {
+    std::ostringstream oss;
+    oss << r.name;
+    if (!r.cuisine.empty()) oss << " - " << r.cuisine;
+    if (!r.openHours.empty()) oss << " (" << r.openHours << ')';
+    return oss.str();
+}
+
 std::string formatMoney(std::int64_t cents) {
     const bool negative = cents < 0;
     if (negative) cents = std::llabs(cents);
 
     std::ostringstream oss;
     if (negative) oss << "-";
-    oss << "₹" << (cents / 100) << '.'
+    oss << "EUR " << (cents / 100) << '.'
         << std::setw(2) << std::setfill('0') << (cents % 100);
     return oss.str();
 }
@@ -148,8 +151,8 @@ std::string nextOrderLineId(const hms::Booking& booking) {
     return oss.str();
 }
 
-std::int64_t estimateNightlyRate(const hms::Room& room) {
-    std::int64_t base = 9000; // ₹90.00 default
+std::int64_t estimateNightlyRate(const hms::Room& room, std::int64_t hotelBaseRate) {
+    std::int64_t base = hotelBaseRate > 0 ? hotelBaseRate : 9000; // EUR 90.00 default
     const std::string type = room.typeId;
     if (type == "DELUXE" || type == "LUXURY") {
         base = 15000;
@@ -265,7 +268,7 @@ void showBookingsSummary(const AppContext& ctx, bool verbose) {
                 const auto total = stay.nightlyRateLocked * stay.nights;
                 roomTotal += total;
                 std::cout << "    Room " << stay.roomNumber
-                          << ": " << stay.nights << " night(s) × "
+                  << ": " << stay.nights << " night(s) x "
                           << formatMoney(stay.nightlyRateLocked)
                           << " = " << formatMoney(total) << "\n";
                 if (verbose && !stay.occupants.empty()) {
@@ -284,7 +287,7 @@ void showBookingsSummary(const AppContext& ctx, bool verbose) {
                 const auto total = line.unitPriceSnapshot * line.qty;
                 diningTotal += total;
                 std::cout << "    Dining: " << line.nameSnapshot
-                          << " × " << line.qty
+                  << " x " << line.qty
                           << " (" << formatMoney(line.unitPriceSnapshot)
                           << ") -> " << formatMoney(total);
                 if (!line.restaurantId.empty()) {
@@ -319,7 +322,7 @@ void handleBookRoom(AppContext& ctx) {
     for (std::size_t i = 0; i < hotels.size(); ++i) {
         const auto& h = hotels[i];
         std::cout << "  " << (i + 1) << ") " << h.name
-                  << " — " << h.address << "\n";
+                  << " - " << h.address << "\n";
     }
     std::cout << "  0) Cancel\n";
 
@@ -351,13 +354,13 @@ void handleBookRoom(AppContext& ctx) {
     std::cout << "\nAvailable rooms at " << selectedHotel.name << ":\n";
     for (std::size_t i = 0; i < rooms.size(); ++i) {
         const auto& room = rooms[i];
-        const auto rate = estimateNightlyRate(room);
+        const auto rate = estimateNightlyRate(room, selectedHotel.baseRateCents);
         std::cout << "  " << (i + 1) << ") Room " << room.number
-                  << " • Beds: " << room.beds
-                  << " • Size: " << room.sizeSqm << " sqm"
-                  << " • Rate: " << formatMoney(rate);
+                  << " - Beds: " << room.beds
+                  << " - Size: " << room.sizeSqm << " sqm"
+                  << " - Rate: " << formatMoney(rate);
         if (!room.amenities.empty()) {
-            std::cout << " • Amenities: ";
+            std::cout << " - Amenities: ";
             for (std::size_t a = 0; a < room.amenities.size(); ++a) {
                 std::cout << room.amenities[a];
                 if (a + 1 < room.amenities.size()) std::cout << ", ";
@@ -383,7 +386,7 @@ void handleBookRoom(AppContext& ctx) {
         return;
     }
 
-    const auto nightlyRate = estimateNightlyRate(selectedRoom);
+    const auto nightlyRate = estimateNightlyRate(selectedRoom, selectedHotel.baseRateCents);
     const auto totalCost   = nightlyRate * (*nights);
 
     const auto bookingId = nextBookingId(*ctx.svc.bookings);
@@ -498,43 +501,54 @@ void handleRestaurantReservation(AppContext& ctx) {
     }
 
     auto booking = *bookingOpt;
+    auto available = restaurantsForHotel(ctx, booking.hotelId);
+    if (available.empty()) {
+        std::cout << "No partner restaurants are available for this stay right now.\n";
+        pause();
+        return;
+    }
+
     std::cout << "\nAvailable restaurants:\n";
-    for (std::size_t i = 0; i < kRestaurants.size(); ++i) {
-        const auto& r = kRestaurants[i];
-        std::cout << "  " << (i + 1) << ") " << r.name
-                  << " — " << r.description << "\n";
+    for (std::size_t i = 0; i < available.size(); ++i) {
+        std::cout << "  " << (i + 1) << ") " << restaurantSummary(available[i]) << "\n";
     }
     std::cout << "  0) Cancel\n";
 
     const auto restaurantChoice = parseInt(readLine("Restaurant: "));
-    if (!restaurantChoice || *restaurantChoice < 0 || *restaurantChoice > static_cast<int>(kRestaurants.size())) {
+    if (!restaurantChoice || *restaurantChoice < 0 || *restaurantChoice > static_cast<int>(available.size())) {
         std::cout << "Invalid selection.\n";
         pause();
         return;
     }
     if (*restaurantChoice == 0) return;
 
-    const auto& restaurant = kRestaurants[*restaurantChoice - 1];
+    const auto restaurant = available[*restaurantChoice - 1];
+    const auto indexes = activeMenuIndexes(restaurant);
+    if (indexes.empty()) {
+        std::cout << "This restaurant has not published a menu yet.\n";
+        pause();
+        return;
+    }
 
     bool addedSomething = false;
     std::int64_t orderTotal = 0;
     for (;;) {
         std::cout << "\n" << restaurant.name << " menu:\n";
-        for (std::size_t i = 0; i < restaurant.menu.size(); ++i) {
-            const auto& item = restaurant.menu[i];
-            std::cout << "  " << (i + 1) << ") [" << item.category << "] "
-                      << item.name << " — " << formatMoney(item.priceCents) << "\n";
+        for (std::size_t display = 0; display < indexes.size(); ++display) {
+            const auto& item = restaurant.menu[indexes[display]];
+            std::cout << "  " << (display + 1) << ") [" << item.category << "] "
+                      << item.name << " - " << formatMoney(item.priceCents) << "\n";
         }
         std::cout << "  0) Finish order\n";
 
         const auto itemChoice = parseInt(readLine("Item: "));
-        if (!itemChoice || *itemChoice < 0 || *itemChoice > static_cast<int>(restaurant.menu.size())) {
+        if (!itemChoice || *itemChoice < 0 || *itemChoice > static_cast<int>(indexes.size())) {
             std::cout << "Invalid selection.\n";
             continue;
         }
         if (*itemChoice == 0) break;
 
-        const auto& menuItem = restaurant.menu[*itemChoice - 1];
+        const auto& menuItem = restaurant.menu[indexes[static_cast<std::size_t>(*itemChoice) - 1]];
         const auto qty = parseInt(readLine("Quantity (1-10): "));
         if (!qty || *qty <= 0 || *qty > 10) {
             std::cout << "Please choose a quantity between 1 and 10.\n";
@@ -573,8 +587,8 @@ void handleRestaurantReservation(AppContext& ctx) {
         addedSomething = true;
         orderTotal += line.unitPriceSnapshot * line.qty;
 
-        std::cout << "Added " << menuItem.name << " × " << *qty
-                  << " — running total " << formatMoney(orderTotal) << "\n";
+        std::cout << "Added " << menuItem.name << " x " << *qty
+                  << " - running total " << formatMoney(orderTotal) << "\n";
 
         auto again = readLine("Add another item? (y/N): ", /*allowEmpty=*/true);
         std::transform(again.begin(), again.end(), again.begin(), [](unsigned char ch){ return static_cast<char>(std::tolower(ch)); });

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <filesystem>
 #include <system_error>
+#include <cstdint>
 
 #include <nlohmann/json.hpp>
 
@@ -38,7 +39,9 @@ json toJson(const hms::Hotel& h) {
         {"id", h.id},
         {"name", h.name},
         {"stars", h.stars},
-        {"address", h.address}
+        {"address", h.address},
+        {"baseRateCents", h.baseRateCents},
+        {"managerUserId", h.managerUserId}
     };
 }
 
@@ -48,6 +51,8 @@ bool fromJson(const json& j, hms::Hotel& h) {
         h.name    = j.value("name", "");
         h.stars   = static_cast<std::uint8_t>(j.value("stars", 0));
         h.address = j.value("address", "");
+        h.baseRateCents = j.value("baseRateCents", static_cast<std::int64_t>(0));
+        h.managerUserId = j.value("managerUserId", std::string{});
         return true;
     }
     catch (...) {

@@ -58,13 +58,81 @@ std::int64_t nowSeconds() {
         .count();
 }
 
+std::optional<std::int64_t> parseMoney(const std::string& text) {
+    auto s = trimCopy(text);
+    if (s.empty()) return std::nullopt;
+
+    if (!s.empty() && s[0] == '$') {
+        s.erase(s.begin());
+        s = trimCopy(s);
+    }
+    else if (s.size() >= 3) {
+        std::string prefix = s.substr(0, 3);
+        std::transform(prefix.begin(), prefix.end(), prefix.begin(),
+                       [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+        if (prefix == "eur") {
+            s = trimCopy(s.substr(3));
+        }
+    }
+
+    bool negative = false;
+    if (!s.empty() && (s[0] == '-' || s[0] == '+')) {
+        negative = (s[0] == '-');
+        s.erase(s.begin());
+        s = trimCopy(s);
+    }
+
+    auto cleanDigits = [](std::string input) {
+        input.erase(std::remove_if(input.begin(), input.end(), [](char ch) {
+            return ch == ',' || std::isspace(static_cast<unsigned char>(ch));
+        }), input.end());
+        return input;
+    };
+
+    std::string whole;
+    std::string fractional;
+    if (const auto pos = s.find('.'); pos != std::string::npos) {
+        whole = s.substr(0, pos);
+        fractional = s.substr(pos + 1);
+    }
+    else {
+        whole = s;
+    }
+
+    whole = cleanDigits(whole);
+    fractional = cleanDigits(fractional);
+
+    if (whole.empty() && fractional.empty()) return std::nullopt;
+    if (whole.empty()) whole = "0";
+
+    try {
+        const std::int64_t euros = std::stoll(whole);
+        int centsPart = 0;
+        if (!fractional.empty()) {
+            if (fractional.size() > 2) fractional = fractional.substr(0, 2);
+            while (fractional.size() < 2) fractional.push_back('0');
+            for (char ch : fractional) {
+                if (!std::isdigit(static_cast<unsigned char>(ch))) return std::nullopt;
+            }
+            centsPart = std::stoi(fractional);
+        }
+
+        std::int64_t total = euros * 100 + centsPart;
+        if (negative) total = -total;
+        return total;
+    }
+    catch (...) {
+        return std::nullopt;
+    }
+}
+
 std::string formatMoney(std::int64_t cents) {
     const bool negative = cents < 0;
     if (negative) cents = std::llabs(cents);
 
     std::ostringstream oss;
     if (negative) oss << "-";
-    oss << "₹" << (cents / 100) << '.'
+    oss << "EUR " << (cents / 100) << '.'
         << std::setw(2) << std::setfill('0') << (cents % 100);
     return oss.str();
 }
@@ -90,6 +158,77 @@ std::string bookingStatusToString(BookingStatus status) {
         case BookingStatus::CANCELLED:    return "CANCELLED";
     }
     return "ACTIVE";
+}
+
+std::string roleToString(hms::Role role) {
+    switch (role) {
+        case hms::Role::ADMIN: return "ADMIN";
+        case hms::Role::HOTEL_MANAGER: return "HOTEL_MANAGER";
+        case hms::Role::GUEST: default: return "GUEST";
+    }
+}
+
+std::string managerLabel(AppContext& ctx, const std::string& userId) {
+    if (userId.empty()) return "-";
+    if (auto user = ctx.svc.users->getById(userId)) {
+        std::string name = user->firstName + " " + user->lastName;
+        name = trimCopy(name);
+        if (name.empty()) name = user->login;
+        else if (!user->login.empty()) name += " (" + user->login + ")";
+        return name;
+    }
+    return userId;
+}
+
+std::optional<Hotel> hotelManagedBy(AppContext& ctx,
+                                    const std::string& userId,
+                                    const std::string& excludeId) {
+    for (const auto& hotel : ctx.svc.hotels->list()) {
+        if (hotel.id == excludeId) continue;
+        if (hotel.managerUserId == userId) return hotel;
+    }
+    return std::nullopt;
+}
+
+bool assignManagerByLogin(AppContext& ctx, Hotel& hotel, const std::string& login) {
+    auto userOpt = ctx.svc.users->getByLogin(login);
+    if (!userOpt) {
+        std::cout << "No user found with login '" << login << "'.\n";
+        return false;
+    }
+
+    auto user = *userOpt;
+    if (user.role != hms::Role::HOTEL_MANAGER) {
+        std::cout << "User is currently " << roleToString(user.role) << ".\n";
+        const auto answer = readLine("Convert to HOTEL_MANAGER? (y/N): ", true);
+        if (answer != "y" && answer != "Y" && answer != "yes" && answer != "YES") {
+            std::cout << "Conversion cancelled.\n";
+            return false;
+        }
+        user.role = hms::Role::HOTEL_MANAGER;
+        if (!ctx.svc.users->upsert(user) || !ctx.svc.users->saveAll()) {
+            std::cout << "Failed to update user role.\n";
+            pause();
+            return false;
+        }
+        std::cout << "User promoted to HOTEL_MANAGER.\n";
+    }
+
+    if (auto conflict = hotelManagedBy(ctx, user.userId, hotel.id)) {
+        std::cout << "Warning: this manager currently oversees "
+                  << conflict->name << " (" << conflict->id << ").\n";
+        const auto answer = readLine("Reassign them to the selected hotel? (y/N): ", true);
+        if (answer != "y" && answer != "Y" && answer != "yes" && answer != "YES") {
+            std::cout << "Assignment cancelled.\n";
+            return false;
+        }
+        auto updated = *conflict;
+        updated.managerUserId.clear();
+        ctx.svc.hotels->upsert(updated);
+    }
+
+    hotel.managerUserId = user.userId;
+    return true;
 }
 
 std::string nextHotelId(const hms::HotelRepository& repo) {
@@ -172,11 +311,13 @@ void listHotels(AppContext& ctx) {
     std::cout << std::left
               << std::setw(6)  << "#"
               << std::setw(12) << "ID"
-              << std::setw(30) << "Name"
-              << std::setw(8)  << "Stars"
+              << std::setw(26) << "Name"
+              << std::setw(7)  << "Stars"
               << std::setw(12) << "Rooms"
+              << std::setw(14) << "Base rate"
+              << std::setw(26) << "Manager"
               << "Address" << '\n';
-    std::cout << std::string(90, '-') << '\n';
+    std::cout << std::string(120, '-') << '\n';
 
     for (std::size_t i = 0; i < hotels.size(); ++i) {
         const auto& hotel = hotels[i];
@@ -185,12 +326,19 @@ void listHotels(AppContext& ctx) {
         std::ostringstream roomsSummary;
         roomsSummary << activeRooms << "/" << roomsForHotel.size();
 
+        const std::string manager = managerLabel(ctx, hotel.managerUserId);
+        const std::string baseRate = hotel.baseRateCents > 0
+            ? formatMoney(hotel.baseRateCents)
+            : "n/a";
+
         std::cout << std::left
                   << std::setw(6)  << (i + 1)
                   << std::setw(12) << hotel.id
-                  << std::setw(30) << hotel.name
-                  << std::setw(8)  << static_cast<int>(hotel.stars)
+                  << std::setw(26) << hotel.name.substr(0, 25)
+                  << std::setw(7)  << static_cast<int>(hotel.stars)
                   << std::setw(12) << roomsSummary.str()
+                  << std::setw(14) << baseRate
+                  << std::setw(26) << manager.substr(0, 25)
                   << hotel.address << '\n';
     }
 
@@ -214,11 +362,28 @@ void createHotel(AppContext& ctx) {
         std::cout << "Please enter a value between 1 and 5.\n";
     }
 
+    std::int64_t baseRate = 0;
+    for (;;) {
+        const auto value = readLine("Base nightly rate (EUR): ");
+        if (const auto parsed = parseMoney(value)) {
+            baseRate = std::max<std::int64_t>(0, *parsed);
+            break;
+        }
+        std::cout << "Enter an amount such as 8500 or 8499.99.\n";
+    }
+
     Hotel hotel{};
     hotel.id = nextHotelId(*ctx.svc.hotels);
     hotel.name = name;
     hotel.address = address;
     hotel.stars = static_cast<std::uint8_t>(stars);
+    hotel.baseRateCents = baseRate;
+
+    for (;;) {
+        const auto managerLogin = readLine("Assign manager login (optional): ", true);
+        if (managerLogin.empty()) break;
+        if (assignManagerByLogin(ctx, hotel, managerLogin)) break;
+    }
 
     ctx.svc.hotels->upsert(hotel);
     ctx.svc.hotels->saveAll();
@@ -257,6 +422,37 @@ void editHotel(AppContext& ctx) {
         }
     }
 
+    for (;;) {
+        const auto current = hotel.baseRateCents > 0 ? formatMoney(hotel.baseRateCents) : std::string("n/a");
+        const auto input = readLine("Base nightly rate [" + current + "]: ", true);
+        if (input.empty()) break;
+        if (const auto parsed = parseMoney(input)) {
+            hotel.baseRateCents = std::max<std::int64_t>(0, *parsed);
+            break;
+        }
+        std::cout << "Enter an amount such as 8500 or 8499.99.\n";
+    }
+
+    for (;;) {
+        std::string currentLogin;
+        if (!hotel.managerUserId.empty()) {
+            if (auto user = ctx.svc.users->getById(hotel.managerUserId)) {
+                currentLogin = user->login;
+            }
+        }
+        std::string prompt = "Manager login";
+        if (!currentLogin.empty()) prompt += " [" + currentLogin + "]";
+        prompt += " (enter '-' to clear)";
+
+        const auto managerLogin = readLine(prompt + ": ", true);
+        if (managerLogin.empty()) break;
+        if (managerLogin == "-") {
+            hotel.managerUserId.clear();
+            break;
+        }
+        if (assignManagerByLogin(ctx, hotel, managerLogin)) break;
+    }
+
     ctx.svc.hotels->upsert(hotel);
     ctx.svc.hotels->saveAll();
 
@@ -278,6 +474,14 @@ void removeHotel(AppContext& ctx) {
     const auto roomCount = ctx.svc.rooms->listByHotel(hotel.id).size();
     if (roomCount > 0) {
         std::cout << "This hotel still has " << roomCount << " rooms. Remove rooms first.\n";
+        pause();
+        return;
+    }
+
+    const auto restaurantCount = ctx.svc.restaurants->listByHotel(hotel.id).size();
+    if (restaurantCount > 0) {
+        std::cout << "This hotel still has " << restaurantCount
+                  << " restaurant(s). Remove or reassign them first.\n";
         pause();
         return;
     }
@@ -537,7 +741,7 @@ void removeRoom(AppContext& ctx, const Hotel& hotel) {
 
 void manageRoomsForHotel(AppContext& ctx, const Hotel& hotel) {
     for (;;) {
-        banner("Rooms • " + hotel.name);
+        banner("Rooms - " + hotel.name);
         std::cout << "1) List rooms\n";
         std::cout << "2) Add room\n";
         std::cout << "3) Edit room\n";
@@ -709,7 +913,7 @@ void viewBookingDetails(AppContext& ctx, const Booking& booking) {
             if (std::holds_alternative<RoomStayItem>(item)) {
                 const auto& stay = std::get<RoomStayItem>(item);
                 std::cout << "- Room " << stay.roomNumber
-                          << " • " << stay.nights << " night(s) @ "
+                          << " - " << stay.nights << " night(s) @ "
                           << formatMoney(stay.nightlyRateLocked) << " per night\n";
                 if (!stay.occupants.empty()) {
                     std::vector<std::string> names;
@@ -721,9 +925,9 @@ void viewBookingDetails(AppContext& ctx, const Booking& booking) {
             }
             else {
                 const auto& order = std::get<RestaurantOrderLine>(item);
-                std::cout << "- Dining • " << order.nameSnapshot
-                          << " ×" << order.qty
-                          << " • " << formatMoney(order.unitPriceSnapshot * order.qty)
+                std::cout << "- Dining - " << order.nameSnapshot
+                          << " x" << order.qty
+                          << " - " << formatMoney(order.unitPriceSnapshot * order.qty)
                           << " (" << order.category << ")\n";
             }
         }

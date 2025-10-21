@@ -1,0 +1,86 @@
+[
+  {
+    "active": true,
+    "cuisine": "Breakfast & comfort classics",
+    "hotelId": "HTL-0001",
+    "id": "RST-0001",
+    "menu": [
+      {
+        "active": true,
+        "category": "Breakfast",
+        "id": "RST-0001-M001",
+        "name": "Masala Omelette",
+        "priceCents": 18000,
+        "restaurantId": "RST-0001"
+      },
+      {
+        "active": true,
+        "category": "Breakfast",
+        "id": "RST-0001-M002",
+        "name": "Maple Pancakes",
+        "priceCents": 22000,
+        "restaurantId": "RST-0001"
+      },
+      {
+        "active": true,
+        "category": "Drinks",
+        "id": "RST-0001-M003",
+        "name": "Cold Brew Coffee",
+        "priceCents": 9000,
+        "restaurantId": "RST-0001"
+      },
+      {
+        "active": true,
+        "category": "Breakfast",
+        "id": "RST-0001-M004",
+        "name": "Seasonal Fruit Bowl",
+        "priceCents": 15000,
+        "restaurantId": "RST-0001"
+      }
+    ],
+    "name": "Sunrise Cafe",
+    "openHours": "06:30-11:30"
+  },
+  {
+    "active": true,
+    "cuisine": "Signature grills & sundowner drinks",
+    "hotelId": "HTL-0001",
+    "id": "RST-0002",
+    "menu": [
+      {
+        "active": true,
+        "category": "Dinner",
+        "id": "RST-0002-M001",
+        "name": "Tandoori Chicken Tikka",
+        "priceCents": 32000,
+        "restaurantId": "RST-0002"
+      },
+      {
+        "active": true,
+        "category": "Dinner",
+        "id": "RST-0002-M002",
+        "name": "Charred Sea Bass",
+        "priceCents": 42000,
+        "restaurantId": "RST-0002"
+      },
+      {
+        "active": true,
+        "category": "Dinner",
+        "id": "RST-0002-M003",
+        "name": "Smoked Paneer Skewers",
+        "priceCents": 28000,
+        "restaurantId": "RST-0002"
+      },
+      {
+        "active": true,
+        "category": "Drinks",
+        "id": "RST-0002-M004",
+        "name": "Classic Mojito",
+        "priceCents": 12000,
+        "restaurantId": "RST-0002"
+      }
+    ],
+    "name": "Azure Grill",
+    "openHours": "18:00-23:00"
+  }
+]

@@ -3,7 +3,7 @@
 //#include <variant>
 //#include <cassert>
 //
-//// 🔁 Adjust this include to your actual header name:
+//// Adjust this include to your actual header name:
 //#include "storage/UserRepository.h"   // or "storage/UserRepository.h"
 //#include "storage/HotelRepository.h"
 //#include "storage/RoomsRepository.h"
@@ -15,8 +15,8 @@
 //
 //namespace fs = std::filesystem;
 //
-//static void printPass(const std::string& msg) { std::cout << "✅ " << msg << "\n"; }
-//static void printFail(const std::string& msg) { std::cout << "❌ " << msg << "\n"; }
+//static void printPass(const std::string& msg) { std::cout << "[PASS] " << msg << "\n"; }
+//static void printFail(const std::string& msg) { std::cout << "[FAIL] " << msg << "\n"; }
 //
 //int main() {
 //    int fail = 0;
@@ -75,7 +75,7 @@
 //    std::cout << "Rooms  file: " << roomsRepo.resolvedPath()  << "\n";
 //
 //    hms::Hotel h{};
-//    h.id = "HTL-0001"; h.name = "Resort Beach"; h.stars = 4; h.address = "Antalya, Türkiye";
+//    h.id = "HTL-0001"; h.name = "Resort Beach"; h.stars = 4; h.address = "Antalya, Turkiye";
 //    expect(hotelsRepo.upsert(h), "Hotels upsert(HTL-0001)");
 //    expect(hotelsRepo.saveAll(), "Hotels saveAll()");
 //    expect(hotelsRepo.load(),    "Hotels reload()");

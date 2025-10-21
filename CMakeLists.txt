@@ -37,6 +37,8 @@ add_executable(Hotel_Management_System
   src/storage/HotelRepository.cpp
   src/storage/RoomsRepository.h
   src/storage/RoomsRepository.cpp
+  src/storage/RestaurantRepository.h
+  src/storage/RestaurantRepository.cpp
   src/models/Restaurant.h
   src/models/RoomStayItem.h
   src/models/Booking.h
@@ -57,6 +59,8 @@ add_executable(Hotel_Management_System
   src/ui/screens/DashboardGuest.cpp
   src/ui/screens/DashboardAdmin.h
   src/ui/screens/DashboardAdmin.cpp
+  src/ui/screens/DashboardHotelManager.h
+  src/ui/screens/DashboardHotelManager.cpp
   src/ui/screens/WelcomeScreen.h
   src/ui/screens/WelcomeScreen.cpp
   src/ui/Router.h
@@ -64,7 +68,7 @@ add_executable(Hotel_Management_System
   src/Main.cpp
 )
 
-# 👇 NEW: make <nlohmann/json.hpp> resolve to external/nlohmann/json.hpp
+# Note: make <nlohmann/json.hpp> resolve to external/nlohmann/json.hpp
 target_include_directories(Hotel_Management_System PRIVATE
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/src/external
