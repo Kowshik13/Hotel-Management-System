@@ -32,7 +32,6 @@ add_executable(Hotel_Management_System
         src/models/RestaurantOrderLine.h
         src/storage/UserRepository.h
         src/storage/UserRepository.cpp
-        src/Test.cpp
         src/storage/HotelRepository.h
         src/storage/HotelRepository.cpp
         src/storage/RoomsRepository.h
@@ -66,7 +65,7 @@ add_executable(Hotel_Management_System
 
 target_include_directories(Hotel_Management_System PRIVATE
         ${CMAKE_SOURCE_DIR}/src
-        ${CMAKE_SOURCE_DIR}/src/external  # for header-only nlohmann/json
+        ${CMAKE_SOURCE_DIR}/src/external
 )
 
 if (nlohmann_json_FOUND)
@@ -81,7 +80,7 @@ if (BUILD_TESTING)
   FetchContent_Declare(
           googletest
           URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
-          DOWNLOAD_EXTRACT_TIMESTAMP TRUE   # also silences the warning
+          DOWNLOAD_EXTRACT_TIMESTAMP TRUE
   )
   FetchContent_MakeAvailable(googletest)
   add_subdirectory(tests)
