@@ -68,12 +68,25 @@ add_executable(Hotel_Management_System
   src/Main.cpp
 )
 
-# 👇 NEW: make <nlohmann/json.hpp> resolve to external/nlohmann/json.hpp
 target_include_directories(Hotel_Management_System PRIVATE
-  ${CMAKE_SOURCE_DIR}/src
-  ${CMAKE_SOURCE_DIR}/src/external
+        ${CMAKE_SOURCE_DIR}/src
+        ${CMAKE_SOURCE_DIR}/src/external
 )
 
 if (nlohmann_json_FOUND)
   target_link_libraries(Hotel_Management_System PRIVATE nlohmann_json::nlohmann_json)
+endif()
+
+option(BUILD_TESTING "Build tests" ON)
+include(CTest)
+
+if (BUILD_TESTING)
+  include(FetchContent)
+  FetchContent_Declare(
+          googletest
+          URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+          DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+  )
+  FetchContent_MakeAvailable(googletest)
+  add_subdirectory(tests)
 endif()
