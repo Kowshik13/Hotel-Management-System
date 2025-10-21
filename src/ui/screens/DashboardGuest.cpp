@@ -1,12 +1,7 @@
 #include "DashboardGuest.h"
 #include "../core/ConsoleIO.h"
-#include "../../models/Booking.h"
-#include "../../models/BookingStatus.h"
-#include "../../models/RoomStayItem.h"
-#include "../../models/RestaurantOrderLine.h"
 #include "../../security/Security.h"
 #include <algorithm>
-#include <chrono>
 #include <cctype>
 #include <cstdint>
 #include <cstdlib>
@@ -371,7 +366,7 @@ void handleBookRoom(AppContext& ctx) {
     const int nights = ConsoleIO::readIntInRange("Number of nights (1-30): ", 1, 30);
 
     const auto nightlyRate = estimateNightlyRate(selectedRoom);
-    const auto totalCost   = nightlyRate * (*nights);
+    const auto totalCost   = nightlyRate * nights;
 
     const auto bookingId = nextBookingId(*ctx.svc.bookings);
 
@@ -413,7 +408,7 @@ void handleBookRoom(AppContext& ctx) {
 
     std::cout << "\nSummary:\n";
     std::cout << "  Hotel:  " << selectedHotel.name << "\n";
-    std::cout << "  Room:   " << selectedRoom.number << " for " << *nights
+    std::cout << "  Room:   " << selectedRoom.number << " for " << nights
               << " night(s)\n";
     std::cout << "  Guests: " << stay.occupants.size() << "\n";
     std::cout << "  Total:  " << formatMoney(totalCost) << "\n";
@@ -732,4 +727,4 @@ bool DashboardGuest(hms::AppContext& ctx) {
     }
 }
 
-} // namespace hms::ui
+}

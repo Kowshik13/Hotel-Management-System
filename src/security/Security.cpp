@@ -31,4 +31,4 @@ bool VerifyPasswordDemo(const std::string& passwordHash, const std::string& cand
     return passwordHash == HashPasswordDemo(candidate);
 }
 
-} // namespace hms
+}

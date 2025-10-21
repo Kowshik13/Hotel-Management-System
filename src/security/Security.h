@@ -9,4 +9,4 @@ namespace hms {
 std::string HashPasswordDemo(const std::string& password);
 bool        VerifyPasswordDemo(const std::string& passwordHash, const std::string& candidate);
 
-} // namespace hms
+}

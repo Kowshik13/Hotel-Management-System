@@ -77,7 +77,7 @@ void pause() {
     std::getline(std::cin, _);
 }
 
-} // namespace hms::ui
+}
 
 void ConsoleIO::println(const std::string& s) {
     std::cout << s << '\n';

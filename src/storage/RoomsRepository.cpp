@@ -33,7 +33,7 @@ bool ensureParentDir(const fs::path& p) {
     }
 }
 
-} // namespace
+}
 
 namespace hms {
 
@@ -142,4 +142,4 @@ int RoomsRepository::countActiveByHotel(const std::string& hotelId) const {
     return n;
 }
 
-} // namespace hms
+}

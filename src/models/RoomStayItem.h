@@ -34,4 +34,4 @@ inline void from_json(const nlohmann::json& j, RoomStayItem& rsi) {
     if (j.contains("occupants")) j.at("occupants").get_to(rsi.occupants);
 }
 
-} // namespace hms
+}

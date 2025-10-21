@@ -1,8 +1,7 @@
-// src/models/User.h
 #pragma once
 #include <string>
 #include <nlohmann/json.hpp>
-#include "Role.h"   // ensure Role is defined (see note below)
+#include "Role.h"
 
 namespace hms {
 
@@ -36,7 +35,7 @@ inline void to_json(nlohmann::json& j, const User& u) {
         {"phone", u.phone},
         {"login", u.login},
         {"passwordHash", u.passwordHash},
-        {"role", u.role},       // requires Role to be JSON-serializable (see note)
+        {"role", u.role},
         {"active", u.active}
     };
 }
@@ -51,10 +50,10 @@ inline void from_json(const nlohmann::json& j, User& u) {
 
     // backward-compat: accept either passwordHash or legacy plain "password"
     if (j.contains("passwordHash")) j.at("passwordHash").get_to(u.passwordHash);
-    else if (j.contains("password")) j.at("password").get_to(u.password); // legacy only; consider migrating to hash
+    else if (j.contains("password")) j.at("password").get_to(u.password);
 
     if (j.contains("role"))   j.at("role").get_to(u.role);
     if (j.contains("active")) j.at("active").get_to(u.active);
 }
 
-} // namespace hms
+}

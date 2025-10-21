@@ -16,4 +16,4 @@ NLOHMANN_JSON_SERIALIZE_ENUM(Role, {
     {Role::ADMIN, "ADMIN"}
 })
 
-} // namespace hms
+}

@@ -5,7 +5,6 @@
 #include "screens/DashboardGuest.h"
 #include "screens/DashboardAdmin.h"
 #include "core/ConsoleIO.h"
-#include <iostream>
 #include <stdexcept>
 
 namespace hms::ui {

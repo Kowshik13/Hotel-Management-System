@@ -1,14 +1,6 @@
 #include "DashboardAdmin.h"
 #include "../core/ConsoleIO.h"
-#include "../../models/Booking.h"
-#include "../../models/BookingStatus.h"
-#include "../../models/Hotel.h"
-#include "../../models/RestaurantOrderLine.h"
-#include "../../models/Room.h"
-#include "../../models/RoomStayItem.h"
-#include "../../models/User.h"
 #include <algorithm>
-#include <chrono>
 #include <cctype>
 #include <cstdint>
 #include <cstdlib>
@@ -925,4 +917,4 @@ bool DashboardManager(hms::AppContext& ctx) {
     }
 }
 
-} // namespace hms::ui
+}

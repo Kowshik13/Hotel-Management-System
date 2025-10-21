@@ -45,4 +45,4 @@ namespace hms {
         if (j.contains("items")) j.at("items").get_to(b.items);
     }
 
-} // namespace hms
+}

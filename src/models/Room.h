@@ -55,4 +55,4 @@ inline void from_json(const nlohmann::json& j, Room& r) {
     }
 }
 
-} // namespace hms
+}
