@@ -64,7 +64,7 @@ std::string formatMoney(std::int64_t cents) {
 
     std::ostringstream oss;
     if (negative) oss << "-";
-    oss << "₹" << (cents / 100) << '.'
+    oss << "EUR " << (cents / 100) << '.'
         << std::setw(2) << std::setfill('0') << (cents % 100);
     return oss.str();
 }
@@ -537,7 +537,7 @@ void removeRoom(AppContext& ctx, const Hotel& hotel) {
 
 void manageRoomsForHotel(AppContext& ctx, const Hotel& hotel) {
     for (;;) {
-        banner("Rooms • " + hotel.name);
+        banner("Rooms - " + hotel.name);
         std::cout << "1) List rooms\n";
         std::cout << "2) Add room\n";
         std::cout << "3) Edit room\n";
@@ -584,6 +584,42 @@ void manageRooms(AppContext& ctx) {
         if (const auto parsed = parseInt(choice)) {
             if (*parsed >= 1 && static_cast<std::size_t>(*parsed) <= hotels.size()) {
                 manageRoomsForHotel(ctx, hotels[static_cast<std::size_t>(*parsed) - 1]);
+                continue;
+            }
+        }
+
+        std::cout << "Invalid selection.\n";
+        pause();
+    }
+}
+
+void inspectRooms(AppContext& ctx) {
+    for (;;) {
+        auto hotels = ctx.svc.hotels->list();
+        if (hotels.empty()) {
+            banner("Inspect rooms");
+            std::cout << "No hotels configured yet.\n";
+            pause();
+            return;
+        }
+
+        std::sort(hotels.begin(), hotels.end(), [](const Hotel& a, const Hotel& b) {
+            return a.name < b.name;
+        });
+
+        banner("Inspect rooms");
+        std::cout << "Select a hotel to view its rooms:\n";
+        for (std::size_t i = 0; i < hotels.size(); ++i) {
+            std::cout << (i + 1) << ") " << hotels[i].name << " (" << hotels[i].id << ")\n";
+        }
+        std::cout << "0) Back\n";
+
+        const auto choice = readLine("Hotel: ");
+        if (choice == "0") return;
+
+        if (const auto parsed = parseInt(choice)) {
+            if (*parsed >= 1 && static_cast<std::size_t>(*parsed) <= hotels.size()) {
+                listRoomsForHotel(ctx, hotels[static_cast<std::size_t>(*parsed) - 1]);
                 continue;
             }
         }
@@ -709,7 +745,7 @@ void viewBookingDetails(AppContext& ctx, const Booking& booking) {
             if (std::holds_alternative<RoomStayItem>(item)) {
                 const auto& stay = std::get<RoomStayItem>(item);
                 std::cout << "- Room " << stay.roomNumber
-                          << " • " << stay.nights << " night(s) @ "
+                          << " - " << stay.nights << " night(s) @ "
                           << formatMoney(stay.nightlyRateLocked) << " per night\n";
                 if (!stay.occupants.empty()) {
                     std::vector<std::string> names;
@@ -721,9 +757,9 @@ void viewBookingDetails(AppContext& ctx, const Booking& booking) {
             }
             else {
                 const auto& order = std::get<RestaurantOrderLine>(item);
-                std::cout << "- Dining • " << order.nameSnapshot
-                          << " ×" << order.qty
-                          << " • " << formatMoney(order.unitPriceSnapshot * order.qty)
+                std::cout << "- Dining - " << order.nameSnapshot
+                          << " x" << order.qty
+                          << " - " << formatMoney(order.unitPriceSnapshot * order.qty)
                           << " (" << order.category << ")\n";
             }
         }
@@ -893,6 +929,34 @@ bool DashboardAdmin(hms::AppContext& ctx) {
         }
         if (choice == "1") { manageHotels(ctx); continue; }
         if (choice == "2") { manageRooms(ctx); continue; }
+        if (choice == "3") { manageBookings(ctx); continue; }
+        if (choice == "4") { showReports(ctx); continue; }
+
+        std::cout << "Unknown option.\n";
+        pause();
+    }
+}
+
+bool DashboardManager(hms::AppContext& ctx) {
+    for (;;) {
+        banner("Manager dashboard");
+        std::cout << "1) View hotels summary\n";
+        std::cout << "2) Inspect rooms\n";
+        std::cout << "3) Booking oversight\n";
+        std::cout << "4) Operational reports\n";
+        std::cout << "5) Logout\n";
+        std::cout << "0) Exit application\n";
+        const auto choice = readLine("Select: ");
+
+        if (choice == "5") {
+            return true;
+        }
+        if (choice == "0") {
+            ctx.running = false;
+            return false;
+        }
+        if (choice == "1") { listHotels(ctx); continue; }
+        if (choice == "2") { inspectRooms(ctx); continue; }
         if (choice == "3") { manageBookings(ctx); continue; }
         if (choice == "4") { showReports(ctx); continue; }
 
