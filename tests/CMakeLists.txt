@@ -30,4 +30,12 @@ if (TARGET nlohmann_json::nlohmann_json)
 endif()
 
 include(GoogleTest)
-gtest_discover_tests(hms_repo_tests)
+
+# On Windows, the Visual Studio generator relies on PowerShell (pwsh.exe) when
+# running the test discovery helper that backs gtest_discover_tests.  Some
+# environments – for example fresh VS Code + CMake setups – do not ship with
+# PowerShell in PATH which makes the build emit `'pwsh.exe' is not recognized`
+# and the configuration fails.  Registering the test executable explicitly with
+# add_test avoids that requirement while still allowing `ctest` to execute the
+# suite.
+add_test(NAME hms_repo_tests COMMAND hms_repo_tests)
