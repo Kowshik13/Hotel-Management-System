@@ -8,7 +8,7 @@ namespace hms {
 struct RoomType {
     std::string   id;                // e.g. "RT-DELUXE" (stable key)
     std::string   name;              // e.g. "Deluxe"
-    std::int64_t  nightlyRateCents;  // money in smallest unit
+    std::int64_t  nightlyRateCents;
     bool          active{true};
 };
 
@@ -29,4 +29,4 @@ inline void from_json(const nlohmann::json& j, RoomType& rt) {
     if (j.contains("active")) j.at("active").get_to(rt.active);
 }
 
-} // namespace hms
+}

@@ -50,4 +50,4 @@ inline void from_json(const nlohmann::json& j, RestaurantOrderLine& rol) {
     j.at("createdAt").get_to(rol.createdAt);
 }
 
-} // namespace hms
+}

@@ -1,4 +1,3 @@
-// src/models/BookingStatus.h
 #pragma once
 #include <nlohmann/json.hpp>
 
@@ -12,4 +11,4 @@ NLOHMANN_JSON_SERIALIZE_ENUM(BookingStatus, {
     {BookingStatus::CANCELLED, "CANCELLED"}
 })
 
-} // namespace hms
+}

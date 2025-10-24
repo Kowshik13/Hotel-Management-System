@@ -11,7 +11,7 @@ namespace hms {
     public:
         using path_t = std::filesystem::path;
 
-        // Default path: CWD/../src/data/users.json (normalized)
+        // Default path: ../src/data/users.json (normalized)
         explicit UserRepository(path_t path = defaultUsersPath());
 
         // Disk I/O
@@ -39,4 +39,4 @@ namespace hms {
         std::vector<User> items_;
     };
 
-} // namespace hms
+}

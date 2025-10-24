@@ -208,4 +208,4 @@ bool UserRepository::removeByLogin(const std::string& login) {
     return true;
 }
 
-} // namespace hms
+}

@@ -35,7 +35,7 @@ bool ensureParentDir(const fs::path& p) {
     }
 }
 
-} // namespace
+}
 
 namespace hms {
 
@@ -142,4 +142,4 @@ std::vector<Booking> BookingRepository::listByHotel(const std::string& hotelId) 
     return out;
 }
 
-} // namespace hms
+}

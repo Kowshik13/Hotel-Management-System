@@ -28,7 +28,7 @@ namespace hms {
         std::vector<Booking> listByHotel(const std::string& hotelId) const;
 
         // Paths
-        static path_t defaultPath();                 // CWD/../src/data/bookings.json (normalized)
+        static path_t defaultPath();                 //../src/data/bookings.json (normalized)
         const path_t& resolvedPath() const { return path_; }
 
     private:
@@ -36,4 +36,4 @@ namespace hms {
         std::vector<Booking> items_;
     };
 
-} // namespace hms
+}

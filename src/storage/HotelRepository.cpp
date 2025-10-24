@@ -55,7 +55,7 @@ bool fromJson(const json& j, hms::Hotel& h) {
     }
 }
 
-} // namespace
+}
 
 namespace hms {
 
@@ -147,4 +147,4 @@ std::vector<Hotel> HotelRepository::list() const {
     return items_;
 }
 
-} // namespace hms
+}

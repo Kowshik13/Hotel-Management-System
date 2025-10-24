@@ -10,6 +10,7 @@ add_executable(hms_repo_tests
         ${HMS_STORAGE_SOURCES}
         ${HMS_SECURITY_SOURCES}
         ${HMS_MODEL_SOURCES}
+        test_sample_data.cpp
 )
 
 target_include_directories(hms_repo_tests PRIVATE

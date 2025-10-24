@@ -13,7 +13,6 @@ namespace hms {
         RoomsRepository*   rooms{};
         HotelRepository*   hotels{};
         BookingRepository* bookings{};
-        // Add AuthService later (hashes, lockouts, etc.)
     };
 
     struct AppContext {
