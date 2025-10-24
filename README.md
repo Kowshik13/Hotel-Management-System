@@ -35,7 +35,9 @@ cmake --build build
 ./build/Hotel_Management_System
 ```
 
-On Windows PowerShell:
+On Windows the generator produces configuration-specific folders (such as
+`build/Release`). When running from PowerShell use:
+
 ```powershell
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
@@ -71,6 +73,14 @@ A minimal smoke test suite lives under `tests/` and can be executed with CTest:
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ctest --test-dir build --output-on-failure
+```
+
+On Windows add the configuration when running CTest:
+
+```powershell
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build --config Debug
+ctest --test-dir build -C Debug --output-on-failure
 ```
 
 The suite now includes integrity checks for the sample catalogue file (`test_sample_data.cpp`) alongside repository CRUD smoke tests. The additional output-on-failure flag prints descriptive diagnostics (hotel counts, missing references, etc.) if the sample data ever becomes inconsistent.
